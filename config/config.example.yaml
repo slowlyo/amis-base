@@ -1,3 +1,4 @@
 app:
   name: "Amis Base"
   port: 8080
+  debug: true
