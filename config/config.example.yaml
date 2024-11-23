@@ -2,3 +2,6 @@ app:
   name: "Amis Base"
   port: 8080
   debug: true
+database:
+  driver: "mysql"
+  dsn: "root:root@tcp(127.0.0.1:3306)/amis_base?charset=utf8mb4&parseTime=True&loc=Local"
