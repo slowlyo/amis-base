@@ -12,6 +12,7 @@ func Migration() {
 		models.AdminPermission{},
 		models.AdminMenu{},
 		models.AdminPage{},
+		models.AdminSetting{},
 	}
 
 	for _, model := range modelsToMigrate {
