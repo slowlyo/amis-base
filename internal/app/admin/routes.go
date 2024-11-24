@@ -1,11 +1,15 @@
 package admin
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"amis-base/internal/app/admin/handlers"
+	"github.com/gofiber/fiber/v2"
+)
 
 func registerRoutes(app *fiber.App) {
-	adminApi := app.Group("/admin")
+	adminApi := app.Group("/admin-api")
 
-	adminApi.Get("/", func(ctx *fiber.Ctx) error {
-		return ctx.SendString("Hello, World!")
-	})
+	common := handlers.Common{}
+
+	adminApi.Post("/settings", common.SaveSettings)
+	adminApi.Get("/settings", common.Settings)
 }
