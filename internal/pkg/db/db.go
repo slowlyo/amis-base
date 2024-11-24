@@ -14,10 +14,12 @@ var (
 )
 
 func Bootstrap() {
-	connect()
+	Connect()
+
+	Migration()
 }
 
-func connect() {
+func Connect() {
 	once.Do(func() {
 		var err error
 
@@ -25,7 +27,9 @@ func connect() {
 
 		switch driver {
 		case "mysql":
-			db, err = gorm.Open(mysql.Open(viper.GetString("database.dsn")))
+			db, err = gorm.Open(mysql.Open(viper.GetString("database.dsn")), &gorm.Config{
+				DisableForeignKeyConstraintWhenMigrating: true,
+			})
 		default:
 			log.Fatal("Unsupported database driver: " + driver)
 		}
