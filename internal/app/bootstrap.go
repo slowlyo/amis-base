@@ -1,6 +1,8 @@
 package app
 
 import (
+	"amis-base/internal/app/admin"
+	"amis-base/internal/app/api"
 	"amis-base/internal/pkg/config"
 	"amis-base/internal/pkg/db"
 	"github.com/gofiber/fiber/v2"
@@ -9,21 +11,22 @@ import (
 )
 
 func Bootstrap() {
-	// configs
+	// 加载配置
 	config.Bootstrap()
 
-	// database
+	// 数据库
 	db.Bootstrap()
 
-	// fiber
+	// 初始化 fiber
 	app := fiber.New(fiber.Config{
 		AppName: viper.GetString("app.name"),
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	// 加载 admin 模块
+	admin.Bootstrap(app)
+	// 加载 api 模块
+	api.Bootstrap(app)
 
-	// start
+	// 启动服务
 	log.Fatal(app.Listen(":" + viper.GetString("app.port")))
 }
