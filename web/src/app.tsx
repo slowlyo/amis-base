@@ -17,7 +17,7 @@ const loginPath = '/user/login'
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-    settings?: Partial<LayoutSettings>;
+    settings: any;
     currentUser?: API.CurrentUser;
     loading?: boolean;
     fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
@@ -51,6 +51,7 @@ export async function getInitialState(): Promise<{
             phone: '0752-268888888',
         }
     }
+
     // 如果不是登录页面，执行
     const {location} = history
     if (location.pathname !== loginPath) {
@@ -65,7 +66,7 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 // @ts-ignore
 export const layout: RunTimeLayoutConfig = ({initialState, setInitialState}) => {
-    // 处理色弱模式会显w
+    // 处理色弱模式回显异常
     let dom = document.querySelector('body')
     if (dom) {
         if (initialState.settings.theme.colorWeak) {
