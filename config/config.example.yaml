@@ -6,9 +6,18 @@ app:
 database:
   driver: "mysql"
   dsn: "root:root@tcp(127.0.0.1:3306)/amis_base?charset=utf8mb4&parseTime=True&loc=Local"
-# 认证配置
-auth:
-  # 单点登录
-  single_sign_on: false
-  # token 过期时间 (秒) 为 0 时不生成永不过期
-  token_expire: 86400
+
+# 面板配置
+admin:
+  # api 前缀
+  api_prefix: "/admin-api"
+  # 认证配置
+  auth:
+    # 单点登录
+    single_sign_on: false
+    # token 过期时间 (秒) 为 0 时不生成永不过期
+    token_expire: 86400
+    # 白名单 (请求方式 + 注册时的路由)
+    exclude:
+      - "GET:/login"
+      - "GET:/settings"

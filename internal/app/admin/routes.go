@@ -2,11 +2,15 @@ package admin
 
 import (
 	"amis-base/internal/app/admin/handlers"
+	"amis-base/internal/app/admin/middleware"
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 )
 
 func registerRoutes(app *fiber.App) {
-	adminApi := app.Group("/admin-api")
+	adminApi := app.Group(viper.GetString("admin.api_prefix"))
+
+	adminApi.Use(middleware.Auth)
 
 	system := handlers.System{}
 

@@ -15,7 +15,7 @@ func GenerateToken(tableName string, userId uint) string {
 	token := uuid.NewString()
 
 	// 单点登录, 清除其余 token
-	if viper.GetBool("auth.single_sign_on") {
+	if viper.GetBool("admin.auth.single_sign_on") {
 		go CleanTokenByUserId(userId)
 	}
 
@@ -36,7 +36,7 @@ func CleanTokenByUserId(userId uint) {
 
 // CleanExpiredToken 清除过期的 token
 func CleanExpiredToken() {
-	expireTime := viper.GetInt("auth.token_expire")
+	expireTime := viper.GetInt("admin.auth.token_expire")
 
 	if expireTime == 0 {
 		return
