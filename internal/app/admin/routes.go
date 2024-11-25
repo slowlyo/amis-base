@@ -8,8 +8,11 @@ import (
 func registerRoutes(app *fiber.App) {
 	adminApi := app.Group("/admin-api")
 
-	common := handlers.Common{}
+	system := handlers.System{}
 
-	adminApi.Post("/settings", common.SaveSettings)
-	adminApi.Get("/settings", common.Settings)
+	adminApi.Post("/settings", system.SaveSettings)
+	adminApi.Get("/settings", system.Settings)
+	adminApi.Get("/menus", system.Menus)
+	adminApi.Get("/user", system.User)
+	adminApi.Post("/login", system.Login)
 }

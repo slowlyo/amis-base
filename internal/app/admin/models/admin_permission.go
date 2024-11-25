@@ -1,7 +1,9 @@
 package models
 
+import base "amis-base/internal/models"
+
 type AdminPermission struct {
-	BaseModel
+	base.BaseModel
 
 	ParentId uint   `gorm:"type:int(11);not null;default:0"`
 	Name     string `gorm:"type:varchar(255);not null;unique"`

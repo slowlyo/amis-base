@@ -1,7 +1,9 @@
 package models
 
+import base "amis-base/internal/models"
+
 type AdminUser struct {
-	BaseModel
+	base.BaseModel
 
 	Username string      `gorm:"unique;type:varchar(255);not null"`
 	Password string      `gorm:"type:varchar(255);not null;" json:"-"`

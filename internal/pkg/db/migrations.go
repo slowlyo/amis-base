@@ -2,6 +2,7 @@ package db
 
 import (
 	"amis-base/internal/app/admin/models"
+	baseModel "amis-base/internal/models"
 	"github.com/gofiber/fiber/v2/log"
 )
 
@@ -13,6 +14,7 @@ func Migration() {
 		models.AdminMenu{},
 		models.AdminPage{},
 		models.AdminSetting{},
+		baseModel.Token{},
 	}
 
 	for _, model := range modelsToMigrate {

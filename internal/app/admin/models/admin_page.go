@@ -1,7 +1,9 @@
 package models
 
+import base "amis-base/internal/models"
+
 type AdminPage struct {
-	BaseModel
+	base.BaseModel
 
 	Name   string `gorm:"type:varchar(255);not null;unique"`
 	Sign   string `gorm:"type:varchar(255);not null;unique"`

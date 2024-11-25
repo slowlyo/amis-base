@@ -1,8 +1,14 @@
 app:
-  name: "amis Base"
+  name: "amisBase"
   port: 8080
-  debug: true
   dev: true
+# 数据库配置
 database:
   driver: "mysql"
   dsn: "root:root@tcp(127.0.0.1:3306)/amis_base?charset=utf8mb4&parseTime=True&loc=Local"
+# 认证配置
+auth:
+  # 单点登录
+  single_sign_on: false
+  # token 过期时间 (秒) 为 0 时不生成永不过期
+  token_expire: 86400
