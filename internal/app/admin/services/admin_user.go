@@ -1,4 +1,4 @@
 package services
 
-type AdminUserService struct {
+type AdminUser struct {
 }

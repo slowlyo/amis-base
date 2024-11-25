@@ -3,9 +3,11 @@ package response
 import "github.com/gofiber/fiber/v2"
 
 func Success(ctx *fiber.Ctx, data fiber.Map) error {
-	data["status"] = 0
-
-	return ctx.JSON(data)
+	return ctx.JSON(fiber.Map{
+		"status": 0,
+		"msg":    "",
+		"data":   data,
+	})
 }
 
 func Ok(ctx *fiber.Ctx, msg string) error {

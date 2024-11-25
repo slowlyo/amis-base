@@ -7,6 +7,7 @@ const Settings: ProLayoutProps & {
     pwa?: boolean;
     logo?: string;
 } = {
+    title: 'amis Base',
     navTheme: 'light',
     // 拂晓蓝
     colorPrimary: '#1890ff',
@@ -15,7 +16,6 @@ const Settings: ProLayoutProps & {
     fixedHeader: false,
     fixSiderbar: true,
     colorWeak: false,
-    title: 'amis Base',
     pwa: true,
     logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
     iconfontUrl: '',
