@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/services"
 	"amis-base/internal/pkg/auth"
 	"amis-base/internal/pkg/response"
@@ -51,9 +52,14 @@ func (s *System) Menus(ctx *fiber.Ctx) error {
 	return response.Success(ctx, fiber.Map{})
 }
 
-// User 用户信息
+// User 获取用户信息
 func (s *System) User(ctx *fiber.Ctx) error {
-	return response.Success(ctx, fiber.Map{})
+	user := ctx.Locals("user").(models.AdminUser)
+
+	return response.Success(ctx, fiber.Map{
+		"name":   user.Name,
+		"avatar": user.Avatar,
+	})
 }
 
 type loginReq struct {
@@ -73,6 +79,10 @@ func (s *System) Login(ctx *fiber.Ctx) error {
 
 	if err != nil || !auth.CheckHash(params.Password, user.Password) {
 		return response.Error(ctx, "用户名或密码错误")
+	}
+
+	if user.Enabled == 0 {
+		return response.Error(ctx, "用户已被禁用")
 	}
 
 	return response.Success(ctx, fiber.Map{

@@ -6,6 +6,8 @@ app:
 database:
   driver: "mysql"
   dsn: "root:root@tcp(127.0.0.1:3306)/amis_base?charset=utf8mb4&parseTime=True&loc=Local"
+  # 是否自动迁移
+  migrate: true
 
 # 面板配置
 admin:
@@ -17,7 +19,7 @@ admin:
     single_sign_on: false
     # token 过期时间 (秒) 为 0 时不生成永不过期
     token_expire: 86400
-    # 白名单 (请求方式 + 注册时的路由)
+    # 白名单: 请求方式 + 注册时的路由(支持正则)
     exclude:
-      - "GET:/login"
+      - "POST:/login"
       - "GET:/settings"

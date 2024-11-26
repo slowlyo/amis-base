@@ -62,3 +62,25 @@ func Hash(password string) string {
 func CheckHash(password, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
+
+// QueryToken 查询 token 信息
+func QueryToken(tableName, token string) *models.Token {
+	var tokenModel models.Token
+
+	result := db.GetDB().
+		Where("table_name = ?", tableName).
+		Where("token = ?", helper.Sha256Hash(token)).
+		Where("last_used_at > ?", time.Now().Add(-time.Duration(viper.GetInt("admin.auth.token_expire"))*time.Second)).
+		First(&tokenModel)
+
+	if result.RowsAffected == 0 {
+		return nil
+	}
+
+	// 更新 token 使用时间
+	go func() {
+		db.GetDB().Model(&tokenModel).Update("last_used_at", time.Now())
+	}()
+
+	return &tokenModel
+}
