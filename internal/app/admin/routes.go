@@ -19,4 +19,5 @@ func registerRoutes(app *fiber.App) {
 	adminApi.Get("/menus", system.Menus)
 	adminApi.Get("/user", system.User)
 	adminApi.Post("/login", system.Login)
+	adminApi.Get("/logout", system.Logout)
 }

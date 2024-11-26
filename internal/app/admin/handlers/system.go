@@ -89,3 +89,10 @@ func (s *System) Login(ctx *fiber.Ctx) error {
 		"token": auth.GenerateToken("admin_users", user.ID),
 	})
 }
+
+// Logout 退出登录
+func (s *System) Logout(ctx *fiber.Ctx) error {
+	auth.RemoveToken(ctx.Locals("token").(string))
+
+	return response.Success(ctx, nil)
+}

@@ -23,4 +23,10 @@ func Migration() {
 			log.Fatal("Failed to migrate database: " + err.Error())
 		}
 	}
+
+	go seed()
+}
+
+// 填充初始数据
+func seed() {
 }

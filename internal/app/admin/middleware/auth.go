@@ -45,6 +45,7 @@ func Auth(ctx *fiber.Ctx) error {
 
 	// 存储用户信息
 	ctx.Locals("user", user)
+	ctx.Locals("token", token)
 
 	return ctx.Next()
 }

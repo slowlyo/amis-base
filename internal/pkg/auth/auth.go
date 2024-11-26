@@ -84,3 +84,8 @@ func QueryToken(tableName, token string) *models.Token {
 
 	return &tokenModel
 }
+
+// RemoveToken 删除 token
+func RemoveToken(token string) {
+	db.GetDB().Where("token = ?", helper.Sha256Hash(token)).Delete(&models.Token{})
+}
