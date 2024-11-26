@@ -4,8 +4,6 @@ import RefreshButton from '@/layouts/components/LayoutTopBar/components/RefreshB
 import FullscreenButton from '@/layouts/components/LayoutTopBar/components/FullscreenButton'
 import SettingButton from '@/layouts/components/LayoutTopBar/components/SettingButton'
 import useSetting from '@/hooks/useSetting'
-import DarkThemeButton from '@/layouts/components/LayoutTopBar/components/DarkThemeButton'
-import LocaleButton from '@/layouts/components/LayoutTopBar/components/LocaleButton'
 
 // 顶部导航栏
 const LayoutTopBar = () => {
@@ -16,16 +14,16 @@ const LayoutTopBar = () => {
     return (
         <div className="h-full flex justify-around items-center">
             {/* prependNav */}
-            {getSetting('nav.prependNav') && <AmisRender schema={getSetting('nav.prependNav')}/>}
+            {/*{getSetting('nav.prependNav') && <AmisRender schema={getSetting('nav.prependNav')}/>}*/}
 
-            {getSetting('layout.header.refresh') && <RefreshButton/>}
-            {getSetting('layout.header.dark') && <DarkThemeButton/>}
-            {getSetting('layout.header.full_screen') && <FullscreenButton/>}
-            {getSetting('layout.header.locale_toggle') && <LocaleButton/>}
-            {getSetting('layout.header.theme_config') && <SettingButton/>}
+            <RefreshButton/>
+            {/*<DarkThemeButton/>*/}
+            <FullscreenButton/>
+            {/*<LocaleButton/>*/}
+            {getSetting('dev') && <SettingButton/>}
 
             {/* appendNav */}
-            {getSetting('nav.appendNav') && <AmisRender schema={getSetting('nav.appendNav')}/>}
+            {/*{getSetting('nav.appendNav') && <AmisRender schema={getSetting('nav.appendNav')}/>}*/}
 
             <div className="user-navbar bg-transparent h-full cursor-pointer min-w-[120px]" style={darkTheme() ? {
                 // @ts-ignore

@@ -31,7 +31,7 @@ const LocaleButton = () => {
 
         setLocale(key)
 
-        save.run({admin_locale: key})
+        save.run({key: 'admin_locale', value: key})
     }
 
     return (

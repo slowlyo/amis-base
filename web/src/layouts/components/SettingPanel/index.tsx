@@ -10,8 +10,7 @@ import {
     Radio,
     Select,
     Space,
-    Switch,
-    Tag
+    Switch
 } from 'antd'
 import useStore from '@/hooks/useStore'
 import {useLang} from '@/hooks/useLang'
@@ -81,7 +80,7 @@ const SettingPanel = () => {
 
     // 提交设置
     const submit = () => {
-        save.run({theme: settings.theme})
+        save.run({key: 'system.theme', value: settings.theme})
     }
 
     // 获取动画选项
