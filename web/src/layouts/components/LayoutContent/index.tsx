@@ -81,7 +81,7 @@ const LayoutContent = () => {
                                         <KeepAlive name={name}
                                                    cacheKey={path}
                                                    id={`keep-alive-${name}-${path}`} // 确保ID唯一
-                                                   when={currentRoute?.keep_alive == 1 || (getSetting('theme.keepAlive') && getSetting('layout.keep_alive_exclude')?.indexOf(path) == -1)}>
+                                                   when={currentRoute?.keepAlive == 1 || (getSetting('theme.keepAlive') && getSetting('layout.keep_alive_exclude')?.indexOf(path) == -1)}>
                                             {React.createElement(component, {currentRoute})}
                                         </KeepAlive>
                                     )}/>
