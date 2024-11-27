@@ -7,7 +7,7 @@ import {request} from '../request'
  */
 export const initPageSchema = (path: string, pageSign?: string) => {
     if (pageSign) {
-        return request.get('/page_schema?sign=' + pageSign)
+        return request.get('/pageSchema?sign=' + pageSign)
     }
 
     return request.get(path)

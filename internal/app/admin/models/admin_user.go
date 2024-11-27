@@ -12,3 +12,14 @@ type AdminUser struct {
 	Enabled  int         `gorm:"type:tinyint(1);default:1;not null"`
 	Roles    []AdminRole `gorm:"many2many:admin_user_role;"`
 }
+
+// IsAdministrator 判断是否是超级管理员
+func (u AdminUser) IsAdministrator() bool {
+	for _, roles := range u.Roles {
+		if roles.Sign == "administrator" {
+			return true
+		}
+	}
+
+	return false
+}

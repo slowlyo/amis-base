@@ -74,7 +74,7 @@ const useRoute = () => {
 
     // 默认路由
     const defaultRoute = useMemo(() => {
-        const first = routes.find(r => r.is_home == 1) || routes[0]
+        const first = routes.find(r => r.isHome == 1) || routes[0]
         if (first) {
             const _path = first?.children?.[0]?.path || first.path
 

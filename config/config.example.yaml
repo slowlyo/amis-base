@@ -1,5 +1,6 @@
 app:
   name: "amisBase"
+  logo: "/logo.png"
   port: 8080
   dev: true
 # 数据库配置

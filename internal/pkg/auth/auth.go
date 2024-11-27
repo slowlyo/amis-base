@@ -49,13 +49,7 @@ func CleanExpiredToken() {
 
 // Hash 加密密码
 func Hash(password string) string {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-
-	if err != nil {
-		return ""
-	}
-
-	return string(hashedPassword)
+	return helper.BcryptString(password)
 }
 
 // CheckHash 校验密码

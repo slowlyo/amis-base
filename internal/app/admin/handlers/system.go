@@ -14,8 +14,9 @@ type System struct {
 }
 
 var (
-	settingService services.AdminSetting
 	authService    services.Auth
+	menuService    services.AdminMenu
+	settingService services.AdminSetting
 )
 
 // Settings 获取系统设置
@@ -23,6 +24,7 @@ func (s *System) Settings(ctx *fiber.Ctx) error {
 	return response.Success(ctx, fiber.Map{
 		"dev":     viper.GetBool("app.dev"),
 		"appName": viper.GetString("app.name"),
+		"logo":    viper.GetString("app.logo"),
 		"theme":   settingService.Get("system.theme"),
 	})
 }
@@ -49,7 +51,10 @@ func (s *System) SaveSettings(ctx *fiber.Ctx) error {
 
 // Menus 菜单
 func (s *System) Menus(ctx *fiber.Ctx) error {
-	return response.Success(ctx, fiber.Map{})
+	user := ctx.Locals("user").(models.AdminUser)
+	menus := menuService.GetUserMenus(user)
+
+	return response.Success(ctx, *menuService.BuildRoutes(menus, 0))
 }
 
 // User 获取用户信息
@@ -95,4 +100,12 @@ func (s *System) Logout(ctx *fiber.Ctx) error {
 	auth.RemoveToken(ctx.Locals("token").(string))
 
 	return response.Success(ctx, nil)
+}
+
+// PageSchema 获取页面结构
+func (s *System) PageSchema(ctx *fiber.Ctx) error {
+	return response.Success(ctx, fiber.Map{
+		"type": "tpl",
+		"tpl":  "hello " + ctx.Query("sign"),
+	})
 }

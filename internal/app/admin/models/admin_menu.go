@@ -1,6 +1,8 @@
 package models
 
-import base "amis-base/internal/models"
+import (
+	base "amis-base/internal/models"
+)
 
 type AdminMenu struct {
 	base.BaseModel

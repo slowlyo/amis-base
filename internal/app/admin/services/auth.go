@@ -18,5 +18,5 @@ func (a *Auth) GetUserByUsername(username string) (models.AdminUser, error) {
 func (a *Auth) GetUserById(id uint) (models.AdminUser, error) {
 	var user models.AdminUser
 
-	return user, db.GetDB().Where("enabled = ?", 1).First(&user, id).Error
+	return user, db.GetDB().Preload("Roles").Where("enabled = ?", 1).First(&user, id).Error
 }

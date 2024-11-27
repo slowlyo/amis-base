@@ -2,7 +2,7 @@ package response
 
 import "github.com/gofiber/fiber/v2"
 
-func Success(ctx *fiber.Ctx, data fiber.Map) error {
+func Success(ctx *fiber.Ctx, data any) error {
 	return ctx.JSON(fiber.Map{
 		"status": 0,
 		"code":   200,
@@ -22,10 +22,13 @@ func Ok(ctx *fiber.Ctx, msg string) error {
 	return ctx.JSON(data)
 }
 
-func Fail(ctx *fiber.Ctx, data fiber.Map) error {
-	data["status"] = 1
-
-	return ctx.JSON(data)
+func Fail(ctx *fiber.Ctx, data any) error {
+	return ctx.JSON(fiber.Map{
+		"status": 1,
+		"code":   500,
+		"msg":    "fail",
+		"data":   data,
+	})
 }
 
 func Error(ctx *fiber.Ctx, msg string) error {

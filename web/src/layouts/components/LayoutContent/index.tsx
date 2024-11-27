@@ -64,7 +64,7 @@ const LayoutContent = () => {
 
     return (
         <div className="h-full flex flex-col bg-[var(--owl-body-bg)]" id="owl-container">
-            {(getSetting('theme.enableTab') && !currentRoute?.is_full) && <LayoutTabs/>}
+            {(getSetting('theme.enableTab') && !currentRoute?.isFull) && <LayoutTabs/>}
             <div className="flex-1">
                 <Scrollbars autoHide
                             className="clear-children-mb custom-scrollbar"
@@ -99,7 +99,7 @@ const LayoutContent = () => {
                     {scroll > 400 && <FloatButton.BackTop style={{bottom: '5rem'}} visibilityHeight={0} onClick={() => backTop()}/>}
                 </Scrollbars>
             </div>
-            {!currentRoute?.is_full && <LayoutFooter/>}
+            {!currentRoute?.isFull && <LayoutFooter/>}
         </div>
     )
 }

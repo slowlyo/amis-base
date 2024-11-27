@@ -19,7 +19,9 @@ func Bootstrap() {
 
 	// 初始化 fiber
 	app := fiber.New(fiber.Config{
-		AppName: viper.GetString("app.name"),
+		AppName:           viper.GetString("app.name"),
+		CaseSensitive:     true,
+		EnablePrintRoutes: viper.GetBool("app.dev"),
 	})
 
 	// 加载 admin 模块

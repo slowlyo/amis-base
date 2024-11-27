@@ -14,10 +14,11 @@ func registerRoutes(app *fiber.App) {
 
 	system := handlers.System{}
 
-	adminApi.Post("/settings", system.SaveSettings)
-	adminApi.Get("/settings", system.Settings)
-	adminApi.Get("/menus", system.Menus)
-	adminApi.Get("/user", system.User)
-	adminApi.Post("/login", system.Login)
-	adminApi.Get("/logout", system.Logout)
+	adminApi.Get("/settings", system.Settings)      // 获取系统配置
+	adminApi.Post("/settings", system.SaveSettings) // 保存配置
+	adminApi.Get("/menus", system.Menus)            // 获取菜单
+	adminApi.Get("/user", system.User)              // 获取用户信息
+	adminApi.Post("/login", system.Login)           // 登录
+	adminApi.Get("/logout", system.Logout)          // 退出登录
+	adminApi.Get("/pageSchema", system.PageSchema)  // 获取页面结构
 }
