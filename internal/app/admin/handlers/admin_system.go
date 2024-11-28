@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type System struct {
+type AdminSystem struct {
 }
 
 var (
@@ -22,7 +22,7 @@ var (
 )
 
 // Settings 获取系统设置
-func (s *System) Settings(ctx *fiber.Ctx) error {
+func (s *AdminSystem) Settings(ctx *fiber.Ctx) error {
 	return response.Success(ctx, fiber.Map{
 		"dev":     viper.GetBool("app.dev"),
 		"appName": viper.GetString("app.name"),
@@ -37,7 +37,7 @@ type saveSettingReq struct {
 }
 
 // SaveSettings 保存系统设置
-func (s *System) SaveSettings(ctx *fiber.Ctx) error {
+func (s *AdminSystem) SaveSettings(ctx *fiber.Ctx) error {
 	var params saveSettingReq
 
 	if err := ctx.BodyParser(&params); err != nil {
@@ -52,7 +52,7 @@ func (s *System) SaveSettings(ctx *fiber.Ctx) error {
 }
 
 // Menus 菜单
-func (s *System) Menus(ctx *fiber.Ctx) error {
+func (s *AdminSystem) Menus(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(models.AdminUser)
 	menus := menuService.GetUserMenus(user)
 
@@ -60,7 +60,7 @@ func (s *System) Menus(ctx *fiber.Ctx) error {
 }
 
 // User 获取用户信息
-func (s *System) User(ctx *fiber.Ctx) error {
+func (s *AdminSystem) User(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(models.AdminUser)
 
 	return response.Success(ctx, fiber.Map{
@@ -75,7 +75,7 @@ type loginReq struct {
 }
 
 // Login 登录
-func (s *System) Login(ctx *fiber.Ctx) error {
+func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 	var params loginReq
 
 	if err := ctx.BodyParser(&params); err != nil {
@@ -98,14 +98,14 @@ func (s *System) Login(ctx *fiber.Ctx) error {
 }
 
 // Logout 退出登录
-func (s *System) Logout(ctx *fiber.Ctx) error {
+func (s *AdminSystem) Logout(ctx *fiber.Ctx) error {
 	auth.RemoveToken(ctx.Locals("token").(string))
 
 	return response.Success(ctx, nil)
 }
 
 // PageSchema 获取页面结构
-func (s *System) PageSchema(ctx *fiber.Ctx) error {
+func (s *AdminSystem) PageSchema(ctx *fiber.Ctx) error {
 	pageSign := ctx.Query("sign")
 	schemaStr := pageService.GetSchemaBySign(pageSign)
 

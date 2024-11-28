@@ -12,8 +12,8 @@ func registerRoutes(app *fiber.App) {
 
 	adminApi.Use(middleware.Auth)
 
-	system := handlers.System{}
-
+	// 系统相关
+	system := handlers.AdminSystem{}
 	adminApi.Get("/settings", system.Settings)      // 获取系统配置
 	adminApi.Post("/settings", system.SaveSettings) // 保存配置
 	adminApi.Get("/menus", system.Menus)            // 获取菜单
