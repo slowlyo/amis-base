@@ -5,6 +5,7 @@ import (
 	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
 	"amis-base/internal/pkg/helper"
+	"github.com/spf13/viper"
 	"strconv"
 )
 
@@ -21,6 +22,11 @@ func (m *AdminMenu) GetUserMenus(user models.AdminUser) *[]models.AdminMenu {
 	}
 
 	query.Find(&menus)
+
+	// 追加开发者菜单
+	if viper.GetBool("app.dev") {
+		menus = append(menus, models.AdminMenu{}.DevMenus()...)
+	}
 
 	return &menus
 }

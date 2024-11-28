@@ -6,6 +6,7 @@ import (
 	"amis-base/internal/pkg/auth"
 	"amis-base/internal/pkg/response"
 	"encoding/json"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -16,6 +17,7 @@ type System struct {
 var (
 	authService    services.Auth
 	menuService    services.AdminMenu
+	pageService    services.AdminPage
 	settingService services.AdminSetting
 )
 
@@ -104,8 +106,27 @@ func (s *System) Logout(ctx *fiber.Ctx) error {
 
 // PageSchema 获取页面结构
 func (s *System) PageSchema(ctx *fiber.Ctx) error {
-	return response.Success(ctx, fiber.Map{
-		"type": "tpl",
-		"tpl":  "hello " + ctx.Query("sign"),
-	})
+	pageSign := ctx.Query("sign")
+	schemaStr := pageService.GetSchemaBySign(pageSign)
+
+	if schemaStr == "" {
+		return response.Success(ctx, fiber.Map{
+			"type": "page",
+			"body": fiber.Map{
+				"type":     "alert",
+				"showIcon": true,
+				"level":    "danger",
+				"body":     fmt.Sprintf("页面 %s 不存在", pageSign),
+			},
+		})
+	}
+
+	var schema any
+
+	err := json.Unmarshal([]byte(schemaStr), &schema)
+	if err != nil {
+		return response.Error(ctx, "页面结构解析失败")
+	}
+
+	return response.Success(ctx, schema)
 }
