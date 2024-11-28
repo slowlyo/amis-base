@@ -6,10 +6,13 @@ import (
 )
 
 type AdminPage struct {
+	baseService
+
+	Model models.AdminPage
 }
 
 // GetSchemaBySign 根据页面标识获取页面结构
-func (p AdminPage) GetSchemaBySign(sign string) string {
+func (p *AdminPage) GetSchemaBySign(sign string) string {
 	var page models.AdminPage
 
 	result := db.GetDB().Where("sign = ?", sign).First(&page)
