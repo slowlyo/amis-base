@@ -30,12 +30,10 @@ func registerRoutes(app *fiber.App) {
 	systemApi.Route("/pages", func(router fiber.Router) {
 		handler := handlers.AdminPage{}
 
-		router.Get("", handler.Index)                     // 列表
-		router.Put("", handler.Update)                    // 修改
-		router.Post("", handler.Store)                    // 新增
-		router.Delete("", handler.Destroy)                // 删除
-		router.Get("/edit", handler.Edit)                 // 编辑
-		router.Get("/detail", handler.Show)               // 详情
-		router.Post("/bulk-delete", handler.DestroyBatch) // 批量删除
+		router.Get("", handler.Index)      // 列表
+		router.Put("", handler.Update)     // 修改
+		router.Post("", handler.Store)     // 新增
+		router.Delete("", handler.Destroy) // 删除
+		router.Get("/edit", handler.Edit)  // 编辑获取数据
 	})
 }

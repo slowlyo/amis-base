@@ -9,5 +9,5 @@ func registerRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
 	index := handlers.Index{}
-	api.Get("/", index.Hello)
+	api.Get("/hello", index.Hello)
 }

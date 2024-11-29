@@ -15,7 +15,7 @@ type AdminMenu struct {
 func (m *AdminMenu) GetUserMenus(user models.AdminUser) *[]models.AdminMenu {
 	var menus []models.AdminMenu
 
-	query := db.GetDB().Model(models.AdminMenu{})
+	query := db.Query().Model(models.AdminMenu{})
 
 	if !user.IsAdministrator() {
 		// todo 权限

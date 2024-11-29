@@ -46,7 +46,7 @@ func Connect() {
 	})
 }
 
-func GetDB() *gorm.DB {
+func Query() *gorm.DB {
 	if db == nil {
 		log.Fatal("Database connection not initialized")
 	}

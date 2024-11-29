@@ -4,21 +4,25 @@ import (
 	"amis-base/internal/app/admin/models"
 	baseModel "amis-base/internal/models"
 	"amis-base/internal/pkg/helper"
+	"encoding/json"
 )
 
 // Seed 填充初始数据
 func Seed() {
 	// 用户
-	go seedUser()
+	go seedUsers()
 
 	// 菜单
 	go seedMenus()
 
 	// 角色
-	go seedRole()
+	go seedRoles()
 
 	// 设置
-	go seedSetting()
+	go seedSettings()
+
+	// 页面
+	go seedPages()
 }
 
 // 判断数据表是否为空
@@ -30,7 +34,7 @@ func isNull(model interface{}) bool {
 }
 
 // 填充用户
-func seedUser() {
+func seedUsers() {
 	if !isNull(models.AdminUser{}) {
 		return
 	}
@@ -121,7 +125,7 @@ func seedMenus() {
 }
 
 // 填充角色
-func seedRole() {
+func seedRoles() {
 	if !isNull(models.AdminRole{}) {
 		return
 	}
@@ -135,7 +139,7 @@ func seedRole() {
 }
 
 // 填充设置
-func seedSetting() {
+func seedSettings() {
 	if !isNull(models.AdminSetting{}) {
 		return
 	}
@@ -143,5 +147,18 @@ func seedSetting() {
 	db.Create(&models.AdminSetting{
 		Key:   "system.theme",
 		Value: `{"darkTheme":false,"footer":false,"breadcrumb":true,"themeColor":"rgb(22,119,255)","layoutMode":"default","siderTheme":"light","topTheme":"light","animateInType":"alpha","animateInDuration":600,"animateOutType":"alpha","animateOutDuration":600,"loginTemplate":"default","keepAlive":false,"enableTab":false,"tabIcon":false,"accordionMenu":false}`,
+	})
+}
+
+// 填充页面
+func seedPages() {
+	if !isNull(models.AdminPage{}) {
+		return
+	}
+
+	db.Create(&models.AdminPage{
+		Name:   "页面管理",
+		Sign:   "admin_page",
+		Schema: json.RawMessage(`{ "type": "page", "className": "m:overflow-auto", "body": { "type": "crud", "perPage": 20, "filterTogglable": false, "filterDefaultVisible": false, "api": "/system/pages", "bulkActions": [ { "type": "button", "actionType": "dialog", "label": "删除", "icon": "fa-solid fa-trash-can", "dialog": { "type": "dialog", "title": "删除", "className": "py-2", "actions": [ { "type": "action", "actionType": "cancel", "label": "取消" }, { "type": "action", "actionType": "submit", "label": "删除", "level": "danger" } ], "body": [ { "type": "form", "wrapWithPanel": false, "api": { "method": "post", "url": "/system/pages", "data": { "id": "${ids}" } }, "body": [ { "type": "tpl", "className": "py-2", "tpl": "确认删除选中项？" } ] } ] } } ], "footerToolbar": [ "statistics", "pagination" ], "headerToolbar": [ { "type": "button", "actionType": "dialog", "dialog": { "type": "dialog", "title": "新增", "body": { "type": "form", "panelClassName": "px-48m:px-0", "title": "", "promptPageLeave": true, "onEvent": [], "body": [ { "type": "input-text", "name": "name", "label": "名称", "required": true }, { "type": "input-text", "name": "sign", "label": "标识", "required": true }, { "type": "input-sub-form", "name": "page", "label": "页面结构", "form": { "type": "form", "className": "h-full", "size": "full", "title": "", "body": { "type": "custom-amis-editor", "name": "schema", "label": "", "mode": "normal", "className": "h-full" } }, "required": true } ], "canAccessSuperData": false, "api": "post:/system/pages" }, "size": "md" }, "label": "新增", "icon": "fa fa-add", "level": "primary" }, "bulkActions", { "type": "reload", "align": "right" }, { "type": "filter-toggler", "align": "right" } ], "primaryField": "id", "columns": [ { "name": "id", "label": "ID", "sortable": true }, { "name": "name", "label": "名称", "searchable": true }, { "name": "sign", "label": "标识", "searchable": true }, { "name": "updated_at", "label": "更新时间", "type": "datetime", "sortable": true }, { "type": "operation", "label": "操作", "buttons": [ { "type": "button", "actionType": "dialog", "dialog": { "type": "dialog", "title": "编辑", "body": { "type": "form", "panelClassName": "px-48m:px-0", "title": "", "promptPageLeave": true, "onEvent": [], "body": [ { "type": "input-text", "name": "name", "label": "名称", "required": true }, { "type": "input-text", "name": "sign", "label": "标识", "required": true }, { "type": "input-sub-form", "name": "page", "label": "页面结构", "form": { "type": "form", "className": "h-full", "size": "full", "title": "", "body": { "type": "custom-amis-editor", "name": "schema", "label": "", "mode": "normal", "className": "h-full" } }, "required": true } ], "api": "put:/system/pages", "initApi": "/system/pages/edit?id=${id}", "redirect": "" }, "size": "md" }, "label": "编辑", "level": "link" }, { "type": "button", "actionType": "dialog", "label": "删除", "level": "link", "className": "text-danger", "dialog": { "type": "dialog", "title": "", "className": "py-2", "actions": [ { "type": "action", "actionType": "cancel", "label": "取消" }, { "type": "action", "actionType": "submit", "label": "删除", "level": "danger" } ], "body": [ { "type": "form", "wrapWithPanel": false, "api": "delete:/system/pages", "body": [ { "type": "tpl", "className": "py-2", "tpl": "确认删除选中项？" } ] } ] } } ] } ] } }`),
 	})
 }

@@ -12,14 +12,11 @@ import (
 )
 
 type AdminSystem struct {
+	AuthService    services.Auth
+	MenuService    services.AdminMenu
+	PageService    services.AdminPage
+	SettingService services.AdminSetting
 }
-
-var (
-	authService    services.Auth
-	menuService    services.AdminMenu
-	pageService    services.AdminPage
-	settingService services.AdminSetting
-)
 
 // Settings 获取系统设置
 func (s *AdminSystem) Settings(ctx *fiber.Ctx) error {
@@ -27,7 +24,7 @@ func (s *AdminSystem) Settings(ctx *fiber.Ctx) error {
 		"dev":     viper.GetBool("app.dev"),
 		"appName": viper.GetString("app.name"),
 		"logo":    viper.GetString("app.logo"),
-		"theme":   settingService.Get("system.theme"),
+		"theme":   s.SettingService.Get("system.theme"),
 	})
 }
 
@@ -44,7 +41,7 @@ func (s *AdminSystem) SaveSettings(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
-	if err := settingService.Set(params.Key, params.Value); err != nil {
+	if err := s.SettingService.Set(params.Key, params.Value); err != nil {
 		return response.Error(ctx, "保存失败")
 	}
 
@@ -54,9 +51,9 @@ func (s *AdminSystem) SaveSettings(ctx *fiber.Ctx) error {
 // Menus 菜单
 func (s *AdminSystem) Menus(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(models.AdminUser)
-	menus := menuService.GetUserMenus(user)
+	menus := s.MenuService.GetUserMenus(user)
 
-	return response.Success(ctx, *menuService.BuildRoutes(menus, 0))
+	return response.Success(ctx, *s.MenuService.BuildRoutes(menus, 0))
 }
 
 // User 获取用户信息
@@ -82,7 +79,7 @@ func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
-	user, err := authService.GetUserByUsername(params.Username)
+	user, err := s.AuthService.GetUserByUsername(params.Username)
 
 	if err != nil || !auth.CheckHash(params.Password, user.Password) {
 		return response.Error(ctx, "用户名或密码错误")
@@ -107,9 +104,9 @@ func (s *AdminSystem) Logout(ctx *fiber.Ctx) error {
 // PageSchema 获取页面结构
 func (s *AdminSystem) PageSchema(ctx *fiber.Ctx) error {
 	pageSign := ctx.Query("sign")
-	schemaStr := pageService.GetSchemaBySign(pageSign)
+	schemaStr := s.PageService.GetSchemaBySign(pageSign)
 
-	if schemaStr == "" {
+	if schemaStr == nil {
 		return response.Success(ctx, fiber.Map{
 			"type": "page",
 			"body": fiber.Map{

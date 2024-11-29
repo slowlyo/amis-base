@@ -12,7 +12,7 @@ type AdminSetting struct {
 func (s AdminSetting) Set(key string, value any) error {
 	var record models.AdminSetting
 
-	result := db.GetDB().Where("`key` = ?", key).Find(&record)
+	result := db.Query().Where("`key` = ?", key).Find(&record)
 
 	jsonValue, err := json.Marshal(value)
 	if err != nil {
@@ -23,16 +23,16 @@ func (s AdminSetting) Set(key string, value any) error {
 	record.Value = string(jsonValue)
 
 	if result.RowsAffected == 0 {
-		return db.GetDB().Create(&record).Error
+		return db.Query().Create(&record).Error
 	}
 
-	return db.GetDB().Save(&record).Error
+	return db.Query().Save(&record).Error
 }
 
 func (s AdminSetting) Get(key string) any {
 	var record models.AdminSetting
 
-	result := db.GetDB().Where("`key` = ?", key).First(&record)
+	result := db.Query().Where("`key` = ?", key).First(&record)
 
 	if result.RowsAffected == 0 {
 		return ""

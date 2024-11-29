@@ -19,7 +19,7 @@ func GenerateToken(tableName string, userId uint) string {
 		go CleanTokenByUserId(userId)
 	}
 
-	db.GetDB().Create(&models.Token{
+	db.Query().Create(&models.Token{
 		TableName:  tableName,
 		UserId:     userId,
 		Token:      helper.Sha256Hash(token),
@@ -31,7 +31,7 @@ func GenerateToken(tableName string, userId uint) string {
 
 // CleanTokenByUserId 清除用户 token
 func CleanTokenByUserId(userId uint) {
-	db.GetDB().Where("user_id = ?", userId).Delete(&models.Token{})
+	db.Query().Where("user_id = ?", userId).Delete(&models.Token{})
 }
 
 // CleanExpiredToken 清除过期的 token
@@ -44,7 +44,7 @@ func CleanExpiredToken() {
 
 	latestTime := time.Now().Add(-time.Duration(expireTime) * time.Second)
 
-	db.GetDB().Where("last_used_at < ?", latestTime).Delete(&models.Token{})
+	db.Query().Where("last_used_at < ?", latestTime).Delete(&models.Token{})
 }
 
 // Hash 加密密码
@@ -61,7 +61,7 @@ func CheckHash(password, hash string) bool {
 func QueryToken(tableName, token string) *models.Token {
 	var tokenModel models.Token
 
-	result := db.GetDB().
+	result := db.Query().
 		Where("table_name = ?", tableName).
 		Where("token = ?", helper.Sha256Hash(token)).
 		Where("last_used_at > ?", time.Now().Add(-time.Duration(viper.GetInt("admin.auth.token_expire"))*time.Second)).
@@ -73,7 +73,7 @@ func QueryToken(tableName, token string) *models.Token {
 
 	// 更新 token 使用时间
 	go func() {
-		db.GetDB().Model(&tokenModel).Update("last_used_at", time.Now())
+		db.Query().Model(&tokenModel).Update("last_used_at", time.Now())
 	}()
 
 	return &tokenModel
@@ -81,5 +81,5 @@ func QueryToken(tableName, token string) *models.Token {
 
 // RemoveToken 删除 token
 func RemoveToken(token string) {
-	db.GetDB().Where("token = ?", helper.Sha256Hash(token)).Delete(&models.Token{})
+	db.Query().Where("token = ?", helper.Sha256Hash(token)).Delete(&models.Token{})
 }
