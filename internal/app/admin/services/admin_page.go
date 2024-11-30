@@ -11,7 +11,7 @@ type AdminPage struct {
 }
 
 // List 获取列表
-func (s baseService) List(page, perPage int) ([]models.AdminPage, int64) {
+func (p *AdminPage) List(page, perPage int) ([]models.AdminPage, int64) {
 	var count int64
 	var items []models.AdminPage
 

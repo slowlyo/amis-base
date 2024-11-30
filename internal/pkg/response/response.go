@@ -4,19 +4,21 @@ import "github.com/gofiber/fiber/v2"
 
 func Success(ctx *fiber.Ctx, data any) error {
 	return ctx.JSON(fiber.Map{
-		"status": 0,
-		"code":   200,
-		"msg":    "ok",
-		"data":   data,
+		"status":            0,
+		"code":              200,
+		"msg":               "ok",
+		"doNotDisplayToast": 1,
+		"data":              data,
 	})
 }
 
 func Ok(ctx *fiber.Ctx, msg string) error {
 	data := fiber.Map{
-		"status": 0,
-		"code":   200,
-		"msg":    msg,
-		"data":   fiber.Map{},
+		"status":            0,
+		"code":              200,
+		"msg":               msg,
+		"doNotDisplayToast": 0,
+		"data":              fiber.Map{},
 	}
 
 	return ctx.JSON(data)

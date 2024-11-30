@@ -36,4 +36,14 @@ func registerRoutes(app *fiber.App) {
 		router.Delete("", handler.Destroy) // 删除
 		router.Get("/edit", handler.Edit)  // 编辑获取数据
 	})
+
+	// 角色管理
+	systemApi.Route("/roles", func(router fiber.Router) {
+		handler := handlers.AdminRole{}
+
+		router.Get("", handler.Index)           // 列表
+		router.Post("", handler.Save)           // 新增/修改
+		router.Get("/detail", handler.Show)     // 详情
+		router.Post("/delete", handler.Destroy) // 删除
+	})
 }

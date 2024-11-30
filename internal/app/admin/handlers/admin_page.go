@@ -10,7 +10,7 @@ import (
 )
 
 type AdminPage struct {
-	BaseHandler
+	baseHandler
 
 	Service services.AdminPage
 }
@@ -39,12 +39,10 @@ func (h *AdminPage) Update(ctx *fiber.Ctx) error {
 	}
 
 	page := models.AdminPage{
-		BaseModel: base.BaseModel{
-			ID: uint(params.ID),
-		},
-		Name:   params.Name,
-		Sign:   params.Sign,
-		Schema: params.Page["schema"],
+		BaseModel: base.BaseModel{ID: uint(params.ID)},
+		Name:      params.Name,
+		Sign:      params.Sign,
+		Schema:    params.Page["schema"],
 	}
 
 	if err := h.Service.Save(page); err != nil {
