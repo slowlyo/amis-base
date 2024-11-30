@@ -7,6 +7,7 @@ import (
 	"amis-base/internal/pkg/response"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 type AdminPage struct {
@@ -17,7 +18,12 @@ type AdminPage struct {
 
 // Index 获取列表
 func (h *AdminPage) Index(ctx *fiber.Ctx) error {
-	items, total := h.Service.List(ctx.QueryInt("page", 1), ctx.QueryInt("perPage", 10))
+	filters := h.ParseParams(ctx)
+
+	filters["name"] = ctx.Query("name")
+	filters["sign"] = ctx.Query("sign")
+
+	items, total := h.Service.List(filters)
 
 	return response.Success(ctx, fiber.Map{
 		"items": items,
@@ -32,7 +38,7 @@ type savePageReq struct {
 	Page map[string]json.RawMessage `json:"page"`
 }
 
-func (h *AdminPage) Update(ctx *fiber.Ctx) error {
+func (h *AdminPage) Save(ctx *fiber.Ctx) error {
 	var params savePageReq
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
@@ -46,13 +52,22 @@ func (h *AdminPage) Update(ctx *fiber.Ctx) error {
 	}
 
 	if err := h.Service.Save(page); err != nil {
-		return response.Error(ctx, "保存失败")
+		return response.Error(ctx, err.Error())
 	}
 
 	return response.Ok(ctx, "保存成功")
 }
 
-func (h *AdminPage) Edit(ctx *fiber.Ctx) error {
+// Copy 复制
+func (h *AdminPage) Copy(ctx *fiber.Ctx) error {
+	if err := h.Service.Copy(ctx.QueryInt("id")); err != nil {
+		return response.Error(ctx, err.Error())
+	}
+
+	return response.Ok(ctx, "复制成功")
+}
+
+func (h *AdminPage) Detail(ctx *fiber.Ctx) error {
 	page := h.Service.GetDetailById(ctx.QueryInt("id"))
 
 	return response.Success(ctx, fiber.Map{
@@ -65,25 +80,23 @@ func (h *AdminPage) Edit(ctx *fiber.Ctx) error {
 	})
 }
 
-func (h *AdminPage) Store(ctx *fiber.Ctx) error {
-	var params savePageReq
+type deletePageReq struct {
+	Ids string `json:"ids"`
+}
+
+func (h *AdminPage) Destroy(ctx *fiber.Ctx) error {
+	var params deletePageReq
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}
 
-	page := models.AdminPage{
-		Name:   params.Name,
-		Sign:   params.Sign,
-		Schema: params.Page["schema"],
+	if len(params.Ids) == 0 {
+		return response.Error(ctx, "请选择要删除的数据")
 	}
 
-	if err := h.Service.Save(page); err != nil {
-		return response.Error(ctx, "保存失败")
+	if err := h.Service.Delete(strings.Split(params.Ids, ",")); err != nil {
+		return response.Error(ctx, err.Error())
 	}
 
-	return response.Ok(ctx, "保存成功")
-}
-
-func (h *AdminPage) Destroy(ctx *fiber.Ctx) error {
-	return nil
+	return response.Ok(ctx, "删除成功")
 }

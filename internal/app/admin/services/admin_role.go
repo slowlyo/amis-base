@@ -26,7 +26,7 @@ func (r *AdminRole) List(filters fiber.Map) ([]models.AdminRole, int64) {
 	}
 
 	query.Count(&count)
-	r.BuildListPageQuery(query, filters).Order("id desc").Find(&items)
+	r.BuildListPageQuery(query, filters).Order("updated_at desc").Find(&items)
 
 	return items, count
 }
@@ -60,13 +60,5 @@ func (r *AdminRole) GetDetailById(id int) models.AdminRole {
 }
 
 func (r *AdminRole) Delete(ids []string) error {
-	var count int64
-
-	db.Query().Table("admin_user_role").Where("admin_role_id in ?", ids).Count(&count)
-
-	if count > 0 {
-		return errors.New("不可删除正在使用的角色")
-	}
-
 	return db.Query().Where("id in ?", ids).Delete(&models.AdminRole{}).Error
 }

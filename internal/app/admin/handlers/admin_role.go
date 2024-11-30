@@ -55,7 +55,7 @@ func (h *AdminRole) Save(ctx *fiber.Ctx) error {
 	return response.Ok(ctx, "保存成功")
 }
 
-func (h *AdminRole) Show(ctx *fiber.Ctx) error {
+func (h *AdminRole) Detail(ctx *fiber.Ctx) error {
 	return response.Success(ctx, h.Service.GetDetailById(ctx.QueryInt("id")))
 }
 

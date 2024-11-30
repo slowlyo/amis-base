@@ -15,7 +15,7 @@ type AdminMenu struct {
 	Sort      int    `gorm:"type:int(11);default:0;not null"`
 	IsHome    int    `gorm:"type:tinyint(1);default:0;not null"`
 	IsFull    int    `gorm:"type:tinyint(1);default:0;not null"`
-	PageSign  string `gorm:"type:varchar(255)"`
+	PageSign  string `gorm:"type:varchar(255);index"`
 	KeepAlive int    `gorm:"type:tinyint(1);default:0;not null"`
 
 	Permissions []AdminPermission `gorm:"many2many:admin_menu_permission;"`
