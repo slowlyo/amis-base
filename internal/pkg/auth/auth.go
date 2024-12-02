@@ -2,8 +2,10 @@ package auth
 
 import (
 	"amis-base/internal/models"
+	"amis-base/internal/pkg/cache"
 	"amis-base/internal/pkg/db"
 	"amis-base/internal/pkg/helper"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
@@ -59,22 +61,40 @@ func CheckHash(password, hash string) bool {
 
 // QueryToken 查询 token 信息
 func QueryToken(tableName, token string) *models.Token {
+	// 缓存 key
+	cacheKey := fmt.Sprintf("tokens:%s:%s", tableName, helper.Sha256Hash(token))
+
+	// 更新最后使用时间
+	updateLastUsedAt := func(tokenModel models.Token) {
+		db.Query().Model(&tokenModel).Update("last_used_at", time.Now())
+	}
+
+	// 缓存命中
+	if cachedToken := cache.GetObject[models.Token](cacheKey); cachedToken.ID > 0 {
+		go updateLastUsedAt(cachedToken)
+
+		return &cachedToken
+	}
+
+	// token 过期时间
+	tokenExpire := time.Duration(viper.GetInt("admin.auth.token_expire")) * time.Second
+
 	var tokenModel models.Token
 
 	result := db.Query().
 		Where("table_name = ?", tableName).
 		Where("token = ?", helper.Sha256Hash(token)).
-		Where("last_used_at > ?", time.Now().Add(-time.Duration(viper.GetInt("admin.auth.token_expire"))*time.Second)).
+		Where("last_used_at > ?", time.Now().Add(-tokenExpire)).
 		First(&tokenModel)
 
 	if result.RowsAffected == 0 {
 		return nil
 	}
 
-	// 更新 token 使用时间
-	go func() {
-		db.Query().Model(&tokenModel).Update("last_used_at", time.Now())
-	}()
+	// 缓存 token
+	_ = cache.SetObject(cacheKey, tokenModel, tokenExpire)
+
+	go updateLastUsedAt(tokenModel)
 
 	return &tokenModel
 }
