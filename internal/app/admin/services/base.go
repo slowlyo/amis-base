@@ -7,7 +7,7 @@ import (
 
 type baseService struct{}
 
-func (s baseService) BuildListPageQuery(query *gorm.DB, filters fiber.Map) *gorm.DB {
+func (s baseService) ListQuery(query *gorm.DB, filters fiber.Map) *gorm.DB {
 	// 分页
 	query.Offset((filters["page"].(int) - 1) * filters["perPage"].(int)).Limit(filters["perPage"].(int))
 

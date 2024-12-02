@@ -80,12 +80,8 @@ func (h *AdminPage) Detail(ctx *fiber.Ctx) error {
 	})
 }
 
-type deletePageReq struct {
-	Ids string `json:"ids"`
-}
-
 func (h *AdminPage) Destroy(ctx *fiber.Ctx) error {
-	var params deletePageReq
+	var params idsReq
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}

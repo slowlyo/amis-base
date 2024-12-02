@@ -6,6 +6,10 @@ import "github.com/gofiber/fiber/v2"
 type baseHandler struct {
 }
 
+type idsReq struct {
+	Ids string `json:"ids"`
+}
+
 func (h baseHandler) ParseParams(ctx *fiber.Ctx) fiber.Map {
 	return fiber.Map{
 		"page":     ctx.QueryInt("page", 1),

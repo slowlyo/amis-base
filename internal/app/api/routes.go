@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func registerRoutes(app *fiber.App) {
+func BootRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
 	index := handlers.Index{}

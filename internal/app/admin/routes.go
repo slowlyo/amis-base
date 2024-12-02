@@ -7,27 +7,32 @@ import (
 	"github.com/spf13/viper"
 )
 
-func registerRoutes(app *fiber.App) {
-	adminApi := app.Group(viper.GetString("admin.api_prefix"))
+func BootRoutes(app *fiber.App) {
+	adminRoute := app.Group(viper.GetString("admin.api_prefix"))
 
 	// 认证中间件
-	adminApi.Use(middleware.Auth)
+	adminRoute.Use(middleware.Auth)
 
 	// 系统相关
 	systemHandler := handlers.AdminSystem{}
-	adminApi.Get("/settings", systemHandler.Settings)      // 获取系统配置
-	adminApi.Post("/settings", systemHandler.SaveSettings) // 保存配置
-	adminApi.Get("/menus", systemHandler.Menus)            // 获取菜单
-	adminApi.Get("/user", systemHandler.User)              // 获取用户信息
-	adminApi.Post("/login", systemHandler.Login)           // 登录
-	adminApi.Get("/logout", systemHandler.Logout)          // 退出登录
-	adminApi.Get("/pageSchema", systemHandler.PageSchema)  // 获取页面结构
+	adminRoute.Get("/user", systemHandler.User)              // 获取用户信息
+	adminRoute.Get("/menus", systemHandler.Menus)            // 获取菜单
+	adminRoute.Post("/login", systemHandler.Login)           // 登录
+	adminRoute.Get("/logout", systemHandler.Logout)          // 退出登录
+	adminRoute.Get("/settings", systemHandler.Settings)      // 获取系统配置
+	adminRoute.Get("/pageSchema", systemHandler.PageSchema)  // 获取页面结构
+	adminRoute.Post("/settings", systemHandler.SaveSettings) // 保存配置
 
 	// 系统内置功能
-	systemApi := adminApi.Group("/system")
+	bootSystemRoutes(adminRoute)
+}
+
+func bootSystemRoutes(adminRoute fiber.Router) {
+	// 系统内置功能
+	systemRoute := adminRoute.Group("/system")
 
 	// 页面管理
-	systemApi.Route("/pages", func(router fiber.Router) {
+	systemRoute.Route("/pages", func(router fiber.Router) {
 		handler := handlers.AdminPage{}
 
 		router.Get("", handler.Index)           // 列表
@@ -38,8 +43,18 @@ func registerRoutes(app *fiber.App) {
 	})
 
 	// 角色管理
-	systemApi.Route("/roles", func(router fiber.Router) {
+	systemRoute.Route("/roles", func(router fiber.Router) {
 		handler := handlers.AdminRole{}
+
+		router.Get("", handler.Index)           // 列表
+		router.Post("", handler.Save)           // 新增/修改
+		router.Get("/detail", handler.Detail)   // 详情
+		router.Post("/delete", handler.Destroy) // 删除
+	})
+
+	// 用户管理
+	systemRoute.Route("/users", func(router fiber.Router) {
+		handler := handlers.AdminUser{}
 
 		router.Get("", handler.Index)           // 列表
 		router.Post("", handler.Save)           // 新增/修改

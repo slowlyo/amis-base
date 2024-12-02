@@ -42,13 +42,13 @@ func (h *AdminRole) Save(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
-	page := models.AdminRole{
+	role := models.AdminRole{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		Name:      params.Name,
 		Sign:      params.Sign,
 	}
 
-	if err := h.Service.Save(page); err != nil {
+	if err := h.Service.Save(role); err != nil {
 		return response.Error(ctx, err.Error())
 	}
 
@@ -59,12 +59,8 @@ func (h *AdminRole) Detail(ctx *fiber.Ctx) error {
 	return response.Success(ctx, h.Service.GetDetailById(ctx.QueryInt("id")))
 }
 
-type deleteRoleReq struct {
-	Ids string `json:"ids"`
-}
-
 func (h *AdminRole) Destroy(ctx *fiber.Ctx) error {
-	var params deleteRoleReq
+	var params idsReq
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}
