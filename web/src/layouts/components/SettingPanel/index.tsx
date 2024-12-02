@@ -70,8 +70,6 @@ const SettingPanel = () => {
     const save = useRequest(saveSettings, {
         manual: true,
         onSuccess: () => {
-            message.success(t('theme_setting.save_success'))
-
             // 保存成功后，更新缓存
             localStorage.setItem(getCacheKey('settings'), JSON.stringify(settings))
             setCachedSettings(JSON.stringify(settings))
