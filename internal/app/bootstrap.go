@@ -3,6 +3,7 @@ package app
 import (
 	"amis-base/internal/app/admin"
 	"amis-base/internal/app/api"
+	"amis-base/internal/pkg/cache"
 	"amis-base/internal/pkg/config"
 	"amis-base/internal/pkg/db"
 	"github.com/gofiber/fiber/v2"
@@ -16,6 +17,9 @@ func Bootstrap() {
 
 	// 数据库
 	db.Bootstrap()
+
+	// 缓存
+	cache.Bootstrap()
 
 	// 初始化 fiber
 	app := fiber.New(fiber.Config{

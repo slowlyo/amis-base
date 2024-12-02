@@ -3,12 +3,33 @@ app:
   logo: "/logo.png"
   port: 8080
   dev: true
+
 # 数据库配置
 database:
   driver: "mysql"
   dsn: "root:root@tcp(127.0.0.1:3306)/amis_base?charset=utf8mb4&parseTime=True&loc=Local"
   # 是否自动迁移
   migrate: true
+
+# 缓存配置
+cache:
+  driver: "memory"
+  # 配置
+  options:
+    # 内存
+    memory:
+      # 缓存过期时间
+      gc_interval: 10
+    # redis
+    redis:
+      host: "127.0.0.1"
+      port: 6379
+      username: ""
+      password: ""
+      database: 0
+      reset: false
+      pool_size: 10
+
 
 # 面板配置
 admin:
