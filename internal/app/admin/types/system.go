@@ -19,3 +19,9 @@ type AdminRoutes struct {
 	Meta      AdminRouteMeta `json:"meta"`
 	Children  *[]AdminRoutes `json:"children"`
 }
+
+// Options 下拉框
+type Options struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}

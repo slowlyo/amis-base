@@ -87,3 +87,10 @@ func (u *AdminUser) Destroy(ctx *fiber.Ctx) error {
 
 	return response.Ok(ctx, "删除成功")
 }
+
+// RoleOptions 角色下拉框
+func (u *AdminUser) RoleOptions(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(models.AdminUser)
+
+	return response.Success(ctx, u.Service.GetRoleOptions(user.IsAdministrator()))
+}

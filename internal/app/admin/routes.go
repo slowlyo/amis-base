@@ -56,9 +56,10 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 	systemRoute.Route("/users", func(router fiber.Router) {
 		handler := handlers.AdminUser{}
 
-		router.Get("", handler.Index)           // 列表
-		router.Post("", handler.Save)           // 新增/修改
-		router.Get("/detail", handler.Detail)   // 详情
-		router.Post("/delete", handler.Destroy) // 删除
+		router.Get("", handler.Index)                   // 列表
+		router.Post("", handler.Save)                   // 新增/修改
+		router.Get("/detail", handler.Detail)           // 详情
+		router.Post("/delete", handler.Destroy)         // 删除
+		router.Get("/roleOptions", handler.RoleOptions) // 角色选项列表
 	})
 }

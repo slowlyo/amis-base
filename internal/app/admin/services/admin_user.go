@@ -2,10 +2,12 @@ package services
 
 import (
 	"amis-base/internal/app/admin/models"
+	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
+	"strconv"
 	"strings"
 )
 
@@ -114,4 +116,27 @@ func (r *AdminUser) Delete(ids []string) error {
 
 		return db.Query().Where("id in ?", ids).Delete(&models.AdminUser{}).Error
 	})
+}
+
+// GetRoleOptions 获取用户角色选项
+func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
+	query := db.Query()
+
+	// 非超管, 不可设置超管
+	if !isAdministrator {
+		query.Where("sign <> ?", "administrator")
+	}
+
+	var list []models.AdminRole
+	query.Find(&list)
+
+	var options []types.Options
+	for _, item := range list {
+		options = append(options, types.Options{
+			Label: item.Name,
+			Value: strconv.Itoa(int(item.ID)),
+		})
+	}
+
+	return options
 }
