@@ -30,14 +30,14 @@ func (h *AdminRole) Index(ctx *fiber.Ctx) error {
 	})
 }
 
-type saveRoleReq struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-	Sign string `json:"sign"`
-}
-
+// Save 保存
 func (h *AdminRole) Save(ctx *fiber.Ctx) error {
-	var params saveRoleReq
+	var params struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+		Sign string `json:"sign"`
+	}
+
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}

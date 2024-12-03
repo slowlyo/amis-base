@@ -31,18 +31,17 @@ func (u *AdminUser) Index(ctx *fiber.Ctx) error {
 	})
 }
 
-type saveUserReq struct {
-	ID       int    `json:"id"`
-	Avatar   string `json:"avatar"`
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	RoleIds  string `json:"roleIds"`
-	Enabled  int    `json:"enabled"`
-}
-
+// Save 保存
 func (u *AdminUser) Save(ctx *fiber.Ctx) error {
-	var params saveUserReq
+	var params struct {
+		ID       int    `json:"id"`
+		Avatar   string `json:"avatar"`
+		Username string `json:"username"`
+		Name     string `json:"name"`
+		Password string `json:"password"`
+		RoleIds  string `json:"roleIds"`
+		Enabled  int    `json:"enabled"`
+	}
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}
@@ -67,10 +66,12 @@ func (u *AdminUser) Save(ctx *fiber.Ctx) error {
 	return response.Ok(ctx, "保存成功")
 }
 
+// Detail 详情
 func (u *AdminUser) Detail(ctx *fiber.Ctx) error {
 	return response.Success(ctx, u.Service.GetDetailById(ctx.QueryInt("id")))
 }
 
+// Destroy 删除
 func (u *AdminUser) Destroy(ctx *fiber.Ctx) error {
 	var params idsReq
 	if err := ctx.BodyParser(&params); err != nil {
@@ -93,4 +94,26 @@ func (u *AdminUser) RoleOptions(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(models.AdminUser)
 
 	return response.Success(ctx, u.Service.GetRoleOptions(user.IsAdministrator()))
+}
+
+// QuickSave 快速保存
+func (u *AdminUser) QuickSave(ctx *fiber.Ctx) error {
+	var params struct {
+		ID      int `json:"id"`
+		Enabled int `json:"enabled"`
+	}
+	if err := ctx.BodyParser(&params); err != nil {
+		return response.Error(ctx, "参数错误")
+	}
+
+	user := models.AdminUser{
+		BaseModel: base.BaseModel{ID: uint(params.ID)},
+		Enabled:   params.Enabled,
+	}
+
+	if err := u.Service.QuickSave(user); err != nil {
+		return response.Error(ctx, err.Error())
+	}
+
+	return response.Ok(ctx, "保存成功")
 }

@@ -6,6 +6,7 @@ import (
 	"amis-base/internal/pkg/db"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -16,9 +17,9 @@ type AdminUser struct {
 }
 
 // List 获取列表
-func (r *AdminUser) List(filters fiber.Map) ([]models.AdminUser, int64) {
+func (r *AdminUser) List(filters fiber.Map) ([]fiber.Map, int64) {
 	var count int64
-	var items []models.AdminUser
+	var list []models.AdminUser
 
 	query := db.Query().Model(models.AdminUser{})
 
@@ -31,9 +32,27 @@ func (r *AdminUser) List(filters fiber.Map) ([]models.AdminUser, int64) {
 
 	query.Count(&count)
 	r.ListQuery(query, filters).
+		Preload("Roles").
 		Omit("password").
 		Order("updated_at desc").
-		Find(&items)
+		Find(&list)
+
+	items := make([]fiber.Map, len(list))
+	for i, item := range list {
+		items[i] = fiber.Map{
+			"id":         item.ID,
+			"avatar":     item.Avatar,
+			"name":       item.Name,
+			"username":   item.Username,
+			"enabled":    item.Enabled,
+			"created_at": item.CreatedAt,
+			"updated_at": item.UpdatedAt,
+
+			"roles": lo.Map(item.Roles, func(role models.AdminRole, _ int) fiber.Map {
+				return fiber.Map{"id": role.ID, "name": role.Name}
+			}),
+		}
+	}
 
 	return items, count
 }
@@ -88,21 +107,46 @@ func (r *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 	}
 
 	return db.Query().Transaction(func(tx *gorm.DB) error {
+		// 清除原有角色关联信息
+		del := db.Query().Table("admin_user_role").Where("admin_user_id = ?", data.ID).Delete(nil)
+		if del.Error != nil {
+			return del.Error
+		}
+
+		// 保存角色关联信息
 		if err := insertRoles(data.ID); err != nil {
 			return err
 		}
 
-		return db.Query().Save(&data).Error
+		saveQuery := db.Query()
+
+		// 如果密码为空, 则不保存
+		if data.Password == "" {
+			saveQuery = saveQuery.Omit("password")
+		}
+
+		return saveQuery.Save(&data).Error
 	})
 }
 
 // GetDetailById 获取详情
-func (r *AdminUser) GetDetailById(id int) models.AdminUser {
+func (r *AdminUser) GetDetailById(id int) fiber.Map {
 	var user models.AdminUser
 
-	db.Query().Omit("password").First(&user, id)
+	db.Query().Preload("Roles").Omit("password").First(&user, id)
 
-	return user
+	result := fiber.Map{
+		"id":       user.ID,
+		"avatar":   user.Avatar,
+		"name":     user.Name,
+		"username": user.Username,
+		"enabled":  user.Enabled,
+		"roleIds": strings.Join(lo.Map(user.Roles, func(role models.AdminRole, _ int) string {
+			return strconv.Itoa(int(role.ID))
+		}), ","),
+	}
+
+	return result
 }
 
 func (r *AdminUser) Delete(ids []string) error {
@@ -139,4 +183,9 @@ func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
 	}
 
 	return options
+}
+
+// QuickSave 快速保存
+func (r *AdminUser) QuickSave(user models.AdminUser) error {
+	return db.Query().Select("enabled").Save(user).Error
 }

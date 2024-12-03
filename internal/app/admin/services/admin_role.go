@@ -5,6 +5,7 @@ import (
 	"amis-base/internal/pkg/db"
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type AdminRole struct {
@@ -60,5 +61,21 @@ func (r *AdminRole) GetDetailById(id int) models.AdminRole {
 }
 
 func (r *AdminRole) Delete(ids []string) error {
-	return db.Query().Where("id in ?", ids).Delete(&models.AdminRole{}).Error
+	return db.Query().Transaction(func(tx *gorm.DB) error {
+		var err error
+
+		// 删除用户角色关联信息
+		err = db.Query().Table("admin_user_role").Where("admin_role_id in ?", ids).Delete(nil).Error
+		if err != nil {
+			return err
+		}
+
+		// 删除角色权限关联信息
+		err = db.Query().Table("admin_role_permission").Where("admin_role_id in ?", ids).Delete(nil).Error
+		if err != nil {
+			return err
+		}
+
+		return db.Query().Where("id in ?", ids).Delete(&models.AdminRole{}).Error
+	})
 }

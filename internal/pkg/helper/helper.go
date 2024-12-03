@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 )
 
+// Sha256Hash sha256 加密
 func Sha256Hash(str string) string {
 	sha := sha256.New()
 
@@ -16,6 +17,7 @@ func Sha256Hash(str string) string {
 	return hex.EncodeToString(sha.Sum(nil))
 }
 
+// BcryptString 加密
 func BcryptString(str string) string {
 	hashedStr, err := bcrypt.GenerateFromPassword([]byte(str), bcrypt.DefaultCost)
 
@@ -26,6 +28,7 @@ func BcryptString(str string) string {
 	return string(hashedStr)
 }
 
+// MakeDir 创建目录
 func MakeDir(path string) {
 	path = filepath.Dir(path)
 

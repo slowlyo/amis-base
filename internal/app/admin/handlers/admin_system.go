@@ -31,14 +31,12 @@ func (s *AdminSystem) Settings(ctx *fiber.Ctx) error {
 	})
 }
 
-type saveSettingReq struct {
-	Key   string          `json:"key"`
-	Value json.RawMessage `json:"value"`
-}
-
 // SaveSettings 保存系统设置
 func (s *AdminSystem) SaveSettings(ctx *fiber.Ctx) error {
-	var params saveSettingReq
+	var params struct {
+		Key   string          `json:"key"`
+		Value json.RawMessage `json:"value"`
+	}
 
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
@@ -69,14 +67,12 @@ func (s *AdminSystem) User(ctx *fiber.Ctx) error {
 	})
 }
 
-type loginReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 // Login 登录
 func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
-	var params loginReq
+	var params struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
 
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
