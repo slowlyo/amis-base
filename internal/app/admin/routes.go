@@ -19,6 +19,7 @@ func BootRoutes(app *fiber.App) {
 	adminRoute.Get("/menus", systemHandler.Menus)            // 获取菜单
 	adminRoute.Post("/login", systemHandler.Login)           // 登录
 	adminRoute.Get("/logout", systemHandler.Logout)          // 退出登录
+	adminRoute.Post("/upload", systemHandler.Upload)         // 文件上传
 	adminRoute.Get("/settings", systemHandler.Settings)      // 获取系统配置
 	adminRoute.Get("/pageSchema", systemHandler.PageSchema)  // 获取页面结构
 	adminRoute.Post("/settings", systemHandler.SaveSettings) // 保存配置

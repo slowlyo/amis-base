@@ -4,11 +4,14 @@ import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/services"
 	"amis-base/internal/pkg/auth"
+	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 type AdminSystem struct {
@@ -81,7 +84,7 @@ func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 
 	user, err := s.AuthService.GetUserByUsername(params.Username)
 
-	if err != nil || !auth.CheckHash(params.Password, user.Password) {
+	if err != nil || user.ID == 0 || !auth.CheckHash(params.Password, user.Password) {
 		return response.Error(ctx, "用户名或密码错误")
 	}
 
@@ -99,6 +102,44 @@ func (s *AdminSystem) Logout(ctx *fiber.Ctx) error {
 	auth.RemoveToken(ctx.Locals("token").(string))
 
 	return response.Success(ctx, nil)
+}
+
+// Upload 文件上传
+func (s *AdminSystem) Upload(ctx *fiber.Ctx) error {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return response.Error(ctx, "参数错误")
+	}
+
+	// 资源文件夹
+	resourcePath := "./assets"
+	// 文件上传目录
+	uploadDir := "uploads"
+	pathSlice := []string{resourcePath, uploadDir}
+
+	// 如果传递了自定义的目录, 则添加到路径中
+	dir := ctx.FormValue("dir")
+	if dir != "" {
+		pathSlice = append(pathSlice, dir)
+	}
+
+	// 重命名文件
+	nameSplit := strings.Split(file.Filename, ".")
+	fileName := uuid.NewString() + "." + nameSplit[len(nameSplit)-1]
+	pathSlice = append(pathSlice, fileName)
+
+	filePath := strings.Join(pathSlice, "/")
+
+	helper.MakeDir(filePath)
+
+	err = ctx.SaveFile(file, filePath)
+	if err != nil {
+		return response.Error(ctx, "文件保存失败: "+err.Error())
+	}
+
+	url := fmt.Sprintf("%s://%s%s", ctx.Protocol(), ctx.Hostname(), strings.ReplaceAll(filePath, resourcePath, ""))
+
+	return response.Success(ctx, fiber.Map{"url": url})
 }
 
 // PageSchema 获取页面结构

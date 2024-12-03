@@ -11,7 +11,7 @@ type AdminMenu struct {
 	Name      string `gorm:"type:varchar(255);not null"`
 	Icon      string `gorm:"type:varchar(255);not null"`
 	Path      string `gorm:"type:varchar(255);not null"`
-	Visible   int    `gorm:"type:tinyint(1);default:1;not null"`
+	Visible   int    `gorm:"type:tinyint(1);default:0;not null"`
 	Sort      int    `gorm:"type:int(11);default:0;not null"`
 	IsHome    int    `gorm:"type:tinyint(1);default:0;not null"`
 	IsFull    int    `gorm:"type:tinyint(1);default:0;not null"`

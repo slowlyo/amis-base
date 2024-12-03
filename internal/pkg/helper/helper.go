@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"golang.org/x/crypto/bcrypt"
+	"os"
+	"path/filepath"
 )
 
 func Sha256Hash(str string) string {
@@ -22,4 +24,12 @@ func BcryptString(str string) string {
 	}
 
 	return string(hashedStr)
+}
+
+func MakeDir(path string) {
+	path = filepath.Dir(path)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		_ = os.MkdirAll(path, os.ModePerm)
+	}
 }

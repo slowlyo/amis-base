@@ -33,6 +33,9 @@ func Bootstrap() {
 	// 加载 api 模块
 	api.Bootstrap(app)
 
+	// 文件上传目录
+	app.Static("/uploads", "./assets/uploads")
+
 	// 启动服务
 	log.Fatal(app.Listen(":" + viper.GetString("app.port")))
 }
