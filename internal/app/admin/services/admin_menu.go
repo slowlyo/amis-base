@@ -4,9 +4,9 @@ import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
-	"amis-base/internal/pkg/helper"
+	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/duke-git/lancet/v2/cryptor"
 	"github.com/spf13/viper"
-	"strconv"
 )
 
 type AdminMenu struct {
@@ -37,7 +37,7 @@ func (m *AdminMenu) BuildRoutes(menus *[]models.AdminMenu, parentId uint) *[]typ
 	for _, menu := range *menus {
 		if menu.ParentId == parentId {
 			route := types.AdminRoutes{
-				Name:      helper.Sha256Hash(strconv.Itoa(int(menu.ID))),
+				Name:      cryptor.Sha256(convertor.ToString(menu.ID)),
 				Path:      menu.Path,
 				PageSign:  menu.PageSign,
 				Component: "amis",

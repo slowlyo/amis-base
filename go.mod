@@ -3,6 +3,7 @@ module amis-base
 go 1.23.1
 
 require (
+	github.com/duke-git/lancet/v2 v2.3.3
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/storage/memory/v2 v2.0.1
 	github.com/gofiber/storage/redis/v3 v3.1.2
@@ -33,7 +34,6 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
-	github.com/samber/lo v1.47.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect

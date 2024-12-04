@@ -5,10 +5,10 @@ import (
 	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
 	"errors"
+	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
-	"github.com/samber/lo"
 	"gorm.io/gorm"
-	"strconv"
 	"strings"
 )
 
@@ -48,7 +48,7 @@ func (r *AdminUser) List(filters fiber.Map) ([]fiber.Map, int64) {
 			"created_at": item.CreatedAt,
 			"updated_at": item.UpdatedAt,
 
-			"roles": lo.Map(item.Roles, func(role models.AdminRole, _ int) fiber.Map {
+			"roles": slice.Map(item.Roles, func(_ int, role models.AdminRole) fiber.Map {
 				return fiber.Map{"id": role.ID, "name": role.Name}
 			}),
 		}
@@ -141,8 +141,8 @@ func (r *AdminUser) GetDetailById(id int) fiber.Map {
 		"name":     user.Name,
 		"username": user.Username,
 		"enabled":  user.Enabled,
-		"roleIds": strings.Join(lo.Map(user.Roles, func(role models.AdminRole, _ int) string {
-			return strconv.Itoa(int(role.ID))
+		"roleIds": strings.Join(slice.Map(user.Roles, func(_ int, role models.AdminRole) string {
+			return convertor.ToString(role.ID)
 		}), ","),
 	}
 
@@ -178,7 +178,7 @@ func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
 	for _, item := range list {
 		options = append(options, types.Options{
 			Label: item.Name,
-			Value: strconv.Itoa(int(item.ID)),
+			Value: convertor.ToString(item.ID),
 		})
 	}
 

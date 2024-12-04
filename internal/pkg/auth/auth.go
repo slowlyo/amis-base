@@ -6,6 +6,7 @@ import (
 	"amis-base/internal/pkg/db"
 	"amis-base/internal/pkg/helper"
 	"fmt"
+	"github.com/duke-git/lancet/v2/cryptor"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
@@ -24,7 +25,7 @@ func GenerateToken(tableName string, userId uint) string {
 	db.Query().Create(&models.Token{
 		TableName:  tableName,
 		UserId:     userId,
-		Token:      helper.Sha256Hash(token),
+		Token:      cryptor.Sha256(token),
 		LastUsedAt: time.Now(),
 	})
 
@@ -62,7 +63,7 @@ func CheckHash(password, hash string) bool {
 // QueryToken 查询 token 信息
 func QueryToken(tableName, token string) *models.Token {
 	// 缓存 key
-	cacheKey := fmt.Sprintf("tokens:%s:%s", tableName, helper.Sha256Hash(token))
+	cacheKey := fmt.Sprintf("tokens:%s:%s", tableName, cryptor.Sha256(token))
 
 	// 更新最后使用时间
 	updateLastUsedAt := func(tokenModel models.Token) {
@@ -83,7 +84,7 @@ func QueryToken(tableName, token string) *models.Token {
 
 	result := db.Query().
 		Where("table_name = ?", tableName).
-		Where("token = ?", helper.Sha256Hash(token)).
+		Where("token = ?", cryptor.Sha256(token)).
 		Where("last_used_at > ?", time.Now().Add(-tokenExpire)).
 		First(&tokenModel)
 
@@ -101,5 +102,5 @@ func QueryToken(tableName, token string) *models.Token {
 
 // RemoveToken 删除 token
 func RemoveToken(token string) {
-	db.Query().Where("token = ?", helper.Sha256Hash(token)).Delete(&models.Token{})
+	db.Query().Where("token = ?", cryptor.Sha256(token)).Delete(&models.Token{})
 }
