@@ -63,6 +63,7 @@ func (r *AdminRole) GetDetailById(id int) models.AdminRole {
 	return role
 }
 
+// Delete 删除
 func (r *AdminRole) Delete(ids []string) error {
 	return db.Query().Transaction(func(tx *gorm.DB) error {
 		var err error

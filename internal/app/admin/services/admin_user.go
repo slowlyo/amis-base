@@ -151,7 +151,7 @@ func (r *AdminUser) GetDetailById(id int) fiber.Map {
 		"name":     user.Name,
 		"username": user.Username,
 		"enabled":  user.Enabled,
-		"roleIds": strings.Join(slice.Map(user.Roles, func(_ int, role models.AdminRole) string {
+		"role_ids": strings.Join(slice.Map(user.Roles, func(_ int, role models.AdminRole) string {
 			return convertor.ToString(role.ID)
 		}), ","),
 	}

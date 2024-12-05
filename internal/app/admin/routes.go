@@ -21,7 +21,7 @@ func BootRoutes(app *fiber.App) {
 	adminRoute.Get("/logout", systemHandler.Logout)          // 退出登录
 	adminRoute.Post("/upload", systemHandler.Upload)         // 文件上传
 	adminRoute.Get("/settings", systemHandler.Settings)      // 获取系统配置
-	adminRoute.Get("/pageSchema", systemHandler.PageSchema)  // 获取页面结构
+	adminRoute.Get("/page_schema", systemHandler.PageSchema) // 获取页面结构
 	adminRoute.Post("/settings", systemHandler.SaveSettings) // 保存配置
 
 	// 系统内置功能
@@ -57,11 +57,22 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 	systemRoute.Route("/users", func(router fiber.Router) {
 		handler := handlers.AdminUser{}
 
-		router.Get("", handler.Index)                   // 列表
-		router.Post("", handler.Save)                   // 新增/修改
-		router.Get("/detail", handler.Detail)           // 详情
-		router.Post("/delete", handler.Destroy)         // 删除
-		router.Get("/roleOptions", handler.RoleOptions) // 角色选项列表
-		router.Post("/quickSave", handler.QuickSave)    // 快速编辑
+		router.Get("", handler.Index)                    // 列表
+		router.Post("", handler.Save)                    // 新增/修改
+		router.Get("/detail", handler.Detail)            // 详情
+		router.Post("/delete", handler.Destroy)          // 删除
+		router.Get("/role_options", handler.RoleOptions) // 角色选项列表
+		router.Post("/quick_save", handler.QuickSave)    // 快速编辑
+	})
+
+	// 菜单管理
+	systemRoute.Route("/menus", func(router fiber.Router) {
+		handler := handlers.AdminMenu{}
+
+		router.Get("", handler.Index)                 // 列表
+		router.Post("", handler.Save)                 // 新增/修改
+		router.Get("/detail", handler.Detail)         // 详情
+		router.Post("/delete", handler.Destroy)       // 删除
+		router.Post("/quick_save", handler.QuickSave) // 快速编辑
 	})
 }

@@ -14,6 +14,7 @@ import (
 	"strings"
 )
 
+// AdminSystem 系统基本内容
 type AdminSystem struct {
 	AuthService    services.Auth
 	MenuService    services.AdminMenu

@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// AdminUser 用户
 type AdminUser struct {
 	baseHandler
 
@@ -37,7 +38,7 @@ func (u *AdminUser) Save(ctx *fiber.Ctx) error {
 		Username string `json:"username"`
 		Name     string `json:"name"`
 		Password string `json:"password"`
-		RoleIds  string `json:"roleIds"`
+		RoleIds  string `json:"role_ids"`
 		Enabled  int    `json:"enabled"`
 	}
 	if err := ctx.BodyParser(&params); err != nil {
