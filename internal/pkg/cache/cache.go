@@ -31,7 +31,7 @@ func Bootstrap() {
 
 // BuildKey 构建缓存 key
 func BuildKey(key string) string {
-	return viper.GetString("cache.prefix") + key
+	return viper.GetString("cache.prefix") + ":" + key
 }
 
 // Get 获取缓存数据(byte)

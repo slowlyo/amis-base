@@ -2,6 +2,7 @@ package services
 
 import (
 	"amis-base/internal/app/admin/models"
+	"amis-base/internal/pkg/cache"
 	"amis-base/internal/pkg/db"
 	"encoding/json"
 )
@@ -22,6 +23,8 @@ func (s AdminSetting) Set(key string, value any) error {
 	record.Key = key
 	record.Value = string(jsonValue)
 
+	_ = cache.Delete(cache.BuildKey("setting:" + key))
+
 	if result.RowsAffected == 0 {
 		return db.Query().Create(&record).Error
 	}
@@ -30,17 +33,25 @@ func (s AdminSetting) Set(key string, value any) error {
 }
 
 func (s AdminSetting) Get(key string) any {
-	var record models.AdminSetting
+	value, err := cache.RememberForever[any](cache.BuildKey("setting:"+key), func() (any, error) {
+		var record models.AdminSetting
 
-	result := db.Query().Where("`key` = ?", key).First(&record)
+		result := db.Query().Where("`key` = ?", key).First(&record)
 
-	if result.RowsAffected == 0 {
-		return ""
-	}
+		if result.RowsAffected == 0 {
+			return "", nil
+		}
 
-	var value any
+		var value any
 
-	err := json.Unmarshal([]byte(record.Value), &value)
+		err := json.Unmarshal([]byte(record.Value), &value)
+		if err != nil {
+			return "", nil
+		}
+
+		return value, nil
+	})
+
 	if err != nil {
 		return ""
 	}
