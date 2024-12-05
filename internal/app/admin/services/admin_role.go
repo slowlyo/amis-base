@@ -2,6 +2,7 @@ package services
 
 import (
 	"amis-base/internal/app/admin/models"
+	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
 	"errors"
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,9 @@ func (r *AdminRole) List(filters fiber.Map) ([]models.AdminRole, int64) {
 	var count int64
 	var items []models.AdminRole
 
-	query := db.Query().Model(models.AdminRole{})
+	query := db.Query().
+		Model(models.AdminRole{}).
+		Where("sign <> ?", types.SuperAdminSign) // 超管角色不显示
 
 	if filters["name"].(string) != "" {
 		query.Where("name like ?", "%"+filters["name"].(string)+"%")

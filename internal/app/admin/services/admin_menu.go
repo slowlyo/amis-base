@@ -17,7 +17,7 @@ func (m *AdminMenu) GetUserMenus(user models.AdminUser) *[]models.AdminMenu {
 
 	query := db.Query().Model(models.AdminMenu{})
 
-	if !user.IsAdministrator() {
+	if !user.IsSuperAdmin() {
 		// todo 权限
 	}
 

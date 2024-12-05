@@ -17,11 +17,21 @@ type AdminUser struct {
 }
 
 // List 获取列表
-func (r *AdminUser) List(filters fiber.Map) ([]fiber.Map, int64) {
+func (r *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int64) {
 	var count int64
 	var list []models.AdminUser
 
 	query := db.Query().Model(models.AdminUser{})
+
+	// 非超管, 不显示超管
+	if !isSuperAdmin {
+		query = query.
+			Joins("left join admin_user_role on admin_users.id = admin_user_role.admin_user_id").
+			Where(
+				"admin_role_id not in (?)",
+				db.Query().Model(models.AdminRole{}).Where("sign", types.SuperAdminSign).Select("id"),
+			)
+	}
 
 	if filters["name"].(string) != "" {
 		query.Where("name like ?", "%"+filters["name"].(string)+"%")
@@ -168,7 +178,7 @@ func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
 
 	// 非超管, 不可设置超管
 	if !isAdministrator {
-		query.Where("sign <> ?", "administrator")
+		query = query.Where("sign <> ?", "administrator")
 	}
 
 	var list []models.AdminRole

@@ -1,6 +1,10 @@
 package models
 
-import base "amis-base/internal/models"
+import (
+	"amis-base/internal/app/admin/types"
+	base "amis-base/internal/models"
+	"github.com/duke-git/lancet/v2/slice"
+)
 
 type AdminUser struct {
 	base.BaseModel
@@ -13,13 +17,9 @@ type AdminUser struct {
 	Roles    []AdminRole `gorm:"many2many:admin_user_role;" json:"roles"`
 }
 
-// IsAdministrator 判断是否是超级管理员
-func (u AdminUser) IsAdministrator() bool {
-	for _, roles := range u.Roles {
-		if roles.Sign == "administrator" {
-			return true
-		}
-	}
-
-	return false
+// IsSuperAdmin 判断是否是超级管理员
+func (u *AdminUser) IsSuperAdmin() bool {
+	return slice.Some(u.Roles, func(index int, item AdminRole) bool {
+		return item.Sign == types.SuperAdminSign
+	})
 }

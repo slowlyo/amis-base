@@ -18,17 +18,15 @@ type AdminUser struct {
 
 // Index 获取列表
 func (u *AdminUser) Index(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(models.AdminUser)
 	filters := u.ParseParams(ctx)
 
 	filters["name"] = ctx.Query("name")
 	filters["username"] = ctx.Query("username")
 
-	items, total := u.Service.List(filters)
+	items, total := u.Service.List(filters, user.IsSuperAdmin())
 
-	return response.Success(ctx, fiber.Map{
-		"items": items,
-		"total": total,
-	})
+	return response.Success(ctx, fiber.Map{"items": items, "total": total})
 }
 
 // Save 保存
@@ -93,7 +91,7 @@ func (u *AdminUser) Destroy(ctx *fiber.Ctx) error {
 func (u *AdminUser) RoleOptions(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(models.AdminUser)
 
-	return response.Success(ctx, u.Service.GetRoleOptions(user.IsAdministrator()))
+	return response.Success(ctx, u.Service.GetRoleOptions(user.IsSuperAdmin()))
 }
 
 // QuickSave 快速保存

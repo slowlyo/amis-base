@@ -1,5 +1,8 @@
 package types
 
+// SuperAdminSign 超级管理员标识
+var SuperAdminSign = "administrator"
+
 // AdminRouteMeta 后台路由元信息
 type AdminRouteMeta struct {
 	Title string `json:"title"`
