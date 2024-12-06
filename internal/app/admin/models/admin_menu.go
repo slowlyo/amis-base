@@ -19,6 +19,7 @@ type AdminMenu struct {
 	KeepAlive int    `gorm:"type:tinyint(1);default:0;not null" json:"keep_alive"`
 
 	Permissions []AdminPermission `gorm:"many2many:admin_menu_permission;" json:"permissions"`
+	Children    []AdminMenu       `gorm:"-" json:"children"`
 }
 
 // DevMenus 开发菜单

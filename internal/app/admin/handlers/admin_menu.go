@@ -118,3 +118,19 @@ func (m *AdminMenu) QuickSave(ctx *fiber.Ctx) error {
 
 	return response.Ok(ctx, "保存成功")
 }
+
+// SaveSort 保存排序
+func (m *AdminMenu) SaveSort(ctx *fiber.Ctx) error {
+	var params struct {
+		Menus []models.AdminMenu `json:"rows"`
+	}
+	if err := ctx.BodyParser(&params); err != nil {
+		return response.Error(ctx, "参数错误")
+	}
+
+	if err := m.Service.Reorder(params.Menus); err != nil {
+		return response.Error(ctx, err.Error())
+	}
+
+	return response.Ok(ctx, "保存成功")
+}

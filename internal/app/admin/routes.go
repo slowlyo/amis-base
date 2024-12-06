@@ -74,5 +74,6 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 		router.Get("/detail", handler.Detail)         // 详情
 		router.Post("/delete", handler.Destroy)       // 删除
 		router.Post("/quick_save", handler.QuickSave) // 快速编辑
+		router.Post("/sort", handler.SaveSort)        // 排序
 	})
 }
