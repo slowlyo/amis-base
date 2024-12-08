@@ -82,18 +82,6 @@ func (p *AdminPage) GetDetailById(id int) models.AdminPage {
 
 // Delete 删除
 func (p *AdminPage) Delete(ids []string) error {
-	var count int64
-
-	db.Query().
-		Model(models.AdminMenu{}).
-		Joins("left join admin_pages on admin_menus.page_sign = admin_pages.sign").
-		Where("admin_pages.id in ?", ids).
-		Count(&count)
-
-	if count > 0 {
-		return errors.New("不可删除正在使用的页面")
-	}
-
 	return db.Query().Where("id in ?", ids).Delete(&models.AdminPage{}).Error
 }
 
