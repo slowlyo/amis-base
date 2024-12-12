@@ -36,11 +36,12 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 	systemRoute.Route("/pages", func(router fiber.Router) {
 		handler := handlers.AdminPage{}
 
-		router.Get("", handler.Index)           // 列表
-		router.Post("", handler.Save)           // 保存
-		router.Get("/copy", handler.Copy)       // 复制
-		router.Get("/detail", handler.Detail)   // 详情
-		router.Post("/delete", handler.Destroy) // 删除
+		router.Get("", handler.Index)                 // 列表
+		router.Post("", handler.Save)                 // 保存
+		router.Get("/copy", handler.Copy)             // 复制
+		router.Get("/detail", handler.Detail)         // 详情
+		router.Post("/delete", handler.Destroy)       // 删除
+		router.Post("/quick_save", handler.QuickSave) // 快速编辑
 	})
 
 	// 角色管理

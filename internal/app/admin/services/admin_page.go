@@ -97,3 +97,9 @@ func (p *AdminPage) GetSchemaBySign(sign string) json.RawMessage {
 
 	return page.Schema
 }
+
+// QuickSave 快速保存
+func (p *AdminPage) QuickSave(page models.AdminPage) error {
+	//return db.Query().Model(&models.AdminPage{}).Where("id = ?", page.ID).Update("schema", string(page.Schema)).Error
+	return db.Query().Select("Schema").Save(page).Error
+}
