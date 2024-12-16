@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Bootstrap 初始化
 func Bootstrap() {
 	// 加载配置
 	config.Bootstrap()
@@ -20,7 +21,10 @@ func Bootstrap() {
 
 	// 缓存
 	cache.Bootstrap()
+}
 
+// Start 启动服务
+func Start() {
 	// 初始化 fiber
 	app := fiber.New(fiber.Config{
 		AppName:           viper.GetString("app.name"),
@@ -32,6 +36,9 @@ func Bootstrap() {
 	admin.Bootstrap(app)
 	// 加载 api 模块
 	api.Bootstrap(app)
+
+	// 前端
+	app.Static("/", "./web/dist")
 
 	// 文件上传目录
 	app.Static("/uploads", "./assets/uploads")

@@ -7,7 +7,7 @@ import (
 )
 
 func Migration() {
-	var modelsToMigrate = []interface{}{
+	err := db.AutoMigrate(
 		models.AdminRole{},
 		models.AdminUser{},
 		models.AdminPermission{},
@@ -15,13 +15,10 @@ func Migration() {
 		models.AdminPage{},
 		models.AdminSetting{},
 		baseModel.Token{},
-	}
+	)
 
-	for _, model := range modelsToMigrate {
-		err := db.AutoMigrate(model)
-		if err != nil {
-			log.Fatal("Failed to migrate database: " + err.Error())
-		}
+	if err != nil {
+		log.Fatal("Failed to migrate database: " + err.Error())
 	}
 
 	// 填充数据

@@ -1,7 +1,11 @@
 app:
+  # 应用名称
   name: "amisBase"
+  # logo
   logo: "/logo.png"
+  # 端口
   port: 8080
+  # 开发模式
   dev: true
 
 # 数据库配置
