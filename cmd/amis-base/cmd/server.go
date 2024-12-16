@@ -11,7 +11,7 @@ var serverCmdArgs struct {
 }
 
 func init() {
-	serverCmd.Flags().StringVarP(&serverCmdArgs.Port, "port", "p", viper.GetString("app.port"), "指定服务端口")
+	serverCmd.Flags().StringVarP(&serverCmdArgs.Port, "port", "p", "", "指定服务端口")
 
 	registerCmd(serverCmd)
 }
@@ -20,7 +20,9 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "启动服务",
 	Run: func(cmd *cobra.Command, args []string) {
-		viper.Set("app.port", serverCmdArgs.Port)
+		if serverCmdArgs.Port != "" {
+			viper.Set("app.port", serverCmdArgs.Port)
+		}
 
 		app.Start()
 	},
