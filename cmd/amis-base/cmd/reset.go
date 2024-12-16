@@ -21,6 +21,8 @@ var resetCmd = &cobra.Command{
 
 				fmt.Println("pages 重置成功")
 				break
+			default:
+				fmt.Println("不支持的参数: " + item)
 			}
 		}
 	},
