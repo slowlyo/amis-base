@@ -3,8 +3,8 @@ window.$owl = window.$owl || {}
 window.$owl.appLoader = () => {
     const value = localStorage.getItem(window.$adminApiPrefix.replace(/^\//, '') + '-settings')
     const settings = JSON.parse(value == 'undefined' ? '{}' : value)
-    const color = settings?.system_theme_setting?.themeColor || '#1C1C1C'
-    const bgColor = settings?.system_theme_setting?.darkTheme ? '#1f1f1f' : '#FFFFFF'
+    const color = settings?.theme?.themeColor || '#1C1C1C'
+    const bgColor = settings?.theme?.darkTheme ? '#1f1f1f' : '#FFFFFF'
 
     const loader = `
 <div id="app-loader">
