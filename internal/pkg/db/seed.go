@@ -150,10 +150,22 @@ func seedSettings() {
 	})
 }
 
+// ResetPages 重置页面
+func ResetPages() {
+	seedPages(true)
+}
+
 // 填充页面
-func seedPages() {
-	if !isNull(models.AdminPage{}) {
+func seedPages(force ...bool) {
+	// 是否覆盖数据
+	isForce := len(force) > 0 && force[0]
+
+	if !isNull(models.AdminPage{}) && !isForce {
 		return
+	}
+
+	if isForce {
+		db.Model(&models.AdminPage{}).Exec("TRUNCATE TABLE admin_pages")
 	}
 
 	db.Create(&[]models.AdminPage{
