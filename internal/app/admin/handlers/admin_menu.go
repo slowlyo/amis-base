@@ -65,6 +65,10 @@ func (m *AdminMenu) Save(ctx *fiber.Ctx) error {
 		KeepAlive: params.KeepAlive,
 	}
 
+	if !strings.HasPrefix(role.Path, "http") {
+		role.Path = "/" + strings.TrimLeft(role.Path, "/")
+	}
+
 	if err := m.Service.Save(role); err != nil {
 		return response.Error(ctx, err.Error())
 	}
@@ -133,4 +137,14 @@ func (m *AdminMenu) SaveSort(ctx *fiber.Ctx) error {
 	}
 
 	return response.Ok(ctx, "保存成功")
+}
+
+// ParentOptions 获取父级菜单选项
+func (m *AdminMenu) ParentOptions(ctx *fiber.Ctx) error {
+	return response.Success(ctx, m.Service.GetParentOptions())
+}
+
+// PageOptions 获取页面选项
+func (m *AdminMenu) PageOptions(ctx *fiber.Ctx) error {
+	return response.Success(ctx, m.Service.GetPageOptions())
 }

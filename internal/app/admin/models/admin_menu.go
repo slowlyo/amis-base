@@ -15,11 +15,12 @@ type AdminMenu struct {
 	Sort      int    `gorm:"type:int(11);default:0;not null" json:"sort"`
 	IsHome    int    `gorm:"type:tinyint(1);default:0;not null" json:"is_home"`
 	IsFull    int    `gorm:"type:tinyint(1);default:0;not null" json:"is_full"`
-	PageSign  string `gorm:"type:varchar(255);index" json:"pageSign"`
+	PageSign  string `gorm:"type:varchar(255);index" json:"page_sign"`
 	KeepAlive int    `gorm:"type:tinyint(1);default:0;not null" json:"keep_alive"`
 
 	Permissions []AdminPermission `gorm:"many2many:admin_menu_permission;" json:"permissions"`
 	Children    []AdminMenu       `gorm:"-" json:"children"`
+	Page        AdminPage         `gorm:"foreignKey:PageSign;references:Sign" json:"page"`
 }
 
 // DevMenus 开发菜单

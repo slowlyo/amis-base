@@ -3,6 +3,7 @@ package services
 import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/types"
+	base "amis-base/internal/models"
 	"amis-base/internal/pkg/db"
 	"errors"
 	"fmt"
@@ -90,7 +91,9 @@ func (m *AdminMenu) List(filters fiber.Map) ([]models.AdminMenu, int64) {
 	var count int64
 	var items []models.AdminMenu
 
-	query := db.Query().Model(models.AdminMenu{})
+	query := db.Query().Model(models.AdminMenu{}).Preload("Page", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "name", "sign")
+	})
 
 	if filters["name"].(string) != "" {
 		query.Where("name like ?", "%"+filters["name"].(string)+"%")
@@ -114,6 +117,8 @@ func (m *AdminMenu) Save(data models.AdminMenu) error {
 			return errors.New("菜单路径已存在")
 		}
 
+		m.updateIsHome(data)
+
 		return db.Query().Create(&data).Error
 	}
 
@@ -121,7 +126,15 @@ func (m *AdminMenu) Save(data models.AdminMenu) error {
 		return errors.New("菜单路径已存在")
 	}
 
+	m.updateIsHome(data)
+
 	return db.Query().Save(&data).Error
+}
+
+func (m *AdminMenu) updateIsHome(data models.AdminMenu) {
+	if data.IsHome == 1 {
+		db.Query().Model(&models.AdminMenu{}).Where("is_home = ?", 1).Where("id != ?", data.ID).Update("is_home", 0)
+	}
 }
 
 // GetDetailById 获取详情
@@ -150,10 +163,7 @@ func (m *AdminMenu) Delete(ids []string) error {
 
 // QuickSave 快速保存
 func (m *AdminMenu) QuickSave(menu models.AdminMenu) error {
-	// 首页只能有一个
-	if menu.IsHome == 1 {
-		db.Query().Model(&models.AdminMenu{}).Where("is_home = ?", 1).Update("is_home", 0)
-	}
+	m.updateIsHome(menu)
 
 	return db.Query().Select("visible", "is_home").Save(menu).Error
 }
@@ -183,4 +193,33 @@ func (m *AdminMenu) computeSort(menus []models.AdminMenu, sortMap map[uint]int) 
 
 		m.computeSort(menu.Children, sortMap)
 	}
+}
+
+// GetParentOptions 获取父级菜单选项 (树)
+func (m *AdminMenu) GetParentOptions() []models.AdminMenu {
+	var menus []models.AdminMenu
+
+	db.Query().Model(models.AdminMenu{}).Order("sort asc").Find(&menus)
+
+	return append([]models.AdminMenu{{
+		BaseModel: base.BaseModel{ID: 0},
+		Name:      "无",
+	}}, m.GetTree(menus, 0)...)
+}
+
+// GetPageOptions 获取页面选项
+func (m *AdminMenu) GetPageOptions() []fiber.Map {
+	var pages []models.AdminPage
+
+	db.Query().Model(models.AdminPage{}).Find(&pages)
+
+	result := make([]fiber.Map, len(pages))
+	for i, page := range pages {
+		result[i] = fiber.Map{
+			"label": page.Name,
+			"value": page.Sign,
+		}
+	}
+
+	return result
 }

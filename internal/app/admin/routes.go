@@ -70,11 +70,13 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 	systemRoute.Route("/menus", func(router fiber.Router) {
 		handler := handlers.AdminMenu{}
 
-		router.Get("", handler.Index)                 // 列表
-		router.Post("", handler.Save)                 // 新增/修改
-		router.Get("/detail", handler.Detail)         // 详情
-		router.Post("/delete", handler.Destroy)       // 删除
-		router.Post("/quick_save", handler.QuickSave) // 快速编辑
-		router.Post("/sort", handler.SaveSort)        // 排序
+		router.Get("", handler.Index)                        // 列表
+		router.Post("", handler.Save)                        // 新增/修改
+		router.Get("/detail", handler.Detail)                // 详情
+		router.Post("/delete", handler.Destroy)              // 删除
+		router.Post("/quick_save", handler.QuickSave)        // 快速编辑
+		router.Post("/sort", handler.SaveSort)               // 排序
+		router.Get("/parent_options", handler.ParentOptions) // 父级选项
+		router.Get("/page_options", handler.PageOptions)     // 页面选项
 	})
 }
