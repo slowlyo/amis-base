@@ -14,7 +14,7 @@ const LayoutTopBar = () => {
     // const darkTheme = () => getSetting('theme.topTheme') == 'dark' && getSetting('theme.layoutMode') != 'double'
 
     const items = [
-        {key: 'user', label: '个人中心'},
+        {key: 'user_center', label: '个人中心'},
         {key: 'logout', label: '退出登录'}
     ]
 
@@ -24,8 +24,8 @@ const LayoutTopBar = () => {
             return
         }
 
-        if (key == 'user') {
-            history.push('/user')
+        if (key == 'user_center') {
+            history.push('/user_center')
             return
         }
     }
