@@ -27,7 +27,7 @@ func (p *AdminPage) List(filters fiber.Map) ([]models.AdminPage, int64) {
 	}
 
 	query.Count(&count)
-	p.ListQuery(query, filters).
+	p.ListPaginate(query, filters).
 		Omit("schema").
 		Order("updated_at desc").
 		Find(&items)

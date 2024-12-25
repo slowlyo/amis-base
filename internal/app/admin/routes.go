@@ -29,10 +29,10 @@ func BootRoutes(app *fiber.App) {
 }
 
 func bootSystemRoutes(adminRoute fiber.Router) {
-	// 系统内置功能
+	// 后台管理功能
 	systemRoute := adminRoute.Group("/system")
 
-	// 页面管理
+	// 页面
 	systemRoute.Route("/pages", func(router fiber.Router) {
 		handler := handlers.AdminPage{}
 
@@ -44,7 +44,7 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 		router.Post("/quick_save", handler.QuickSave) // 快速编辑
 	})
 
-	// 角色管理
+	// 角色
 	systemRoute.Route("/roles", func(router fiber.Router) {
 		handler := handlers.AdminRole{}
 
@@ -54,7 +54,7 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 		router.Post("/delete", handler.Destroy) // 删除
 	})
 
-	// 用户管理
+	// 管理员
 	systemRoute.Route("/users", func(router fiber.Router) {
 		handler := handlers.AdminUser{}
 
@@ -66,7 +66,7 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 		router.Post("/quick_save", handler.QuickSave)    // 快速编辑
 	})
 
-	// 菜单管理
+	// 菜单
 	systemRoute.Route("/menus", func(router fiber.Router) {
 		handler := handlers.AdminMenu{}
 
@@ -78,5 +78,17 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 		router.Post("/sort", handler.SaveSort)               // 排序
 		router.Get("/parent_options", handler.ParentOptions) // 父级选项
 		router.Get("/page_options", handler.PageOptions)     // 页面选项
+	})
+
+	// 权限
+	systemRoute.Route("/permissions", func(router fiber.Router) {
+		handler := handlers.AdminPermission{}
+
+		router.Get("", handler.Index)                        // 列表
+		router.Post("", handler.Save)                        // 新增/修改
+		router.Get("/detail", handler.Detail)                // 详情
+		router.Post("/delete", handler.Destroy)              // 删除
+		router.Post("/sort", handler.SaveSort)               // 排序
+		router.Get("/parent_options", handler.ParentOptions) // 父级选项
 	})
 }

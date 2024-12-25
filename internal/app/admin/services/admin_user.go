@@ -17,7 +17,7 @@ type AdminUser struct {
 }
 
 // List 获取列表
-func (r *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int64) {
+func (u *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int64) {
 	var count int64
 	var list []models.AdminUser
 
@@ -41,7 +41,7 @@ func (r *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int
 	}
 
 	query.Count(&count)
-	r.ListQuery(query, filters).
+	u.ListPaginate(query, filters).
 		Preload("Roles").
 		Omit("password").
 		Order("updated_at desc").
@@ -68,9 +68,7 @@ func (r *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int
 }
 
 // Save 保存
-func (r *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
-	query := db.Query().Where("username = ?", data.Username)
-
+func (u *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 	// 角色信息
 	insertRoles := func(userId uint) error {
 		var err error
@@ -97,6 +95,8 @@ func (r *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 		}
 		return db.Query().Table("admin_user_role").Create(insertRoles).Error
 	}
+
+	query := db.Query().Where("username = ?", data.Username)
 
 	if data.ID == 0 {
 		if query.First(&models.AdminUser{}).RowsAffected > 0 {
@@ -140,7 +140,7 @@ func (r *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 }
 
 // GetDetailById 获取详情
-func (r *AdminUser) GetDetailById(id int) fiber.Map {
+func (u *AdminUser) GetDetailById(id int) fiber.Map {
 	var user models.AdminUser
 
 	db.Query().Preload("Roles").Omit("password").First(&user, id)
@@ -159,7 +159,7 @@ func (r *AdminUser) GetDetailById(id int) fiber.Map {
 	return result
 }
 
-func (r *AdminUser) Delete(ids []string) error {
+func (u *AdminUser) Delete(ids []string) error {
 	return db.Query().Transaction(func(tx *gorm.DB) error {
 		// 删除用户角色关联信息
 		result := db.Query().Table("admin_user_role").Where("admin_user_id in ?", ids).Delete(nil)
@@ -173,7 +173,7 @@ func (r *AdminUser) Delete(ids []string) error {
 }
 
 // GetRoleOptions 获取用户角色选项
-func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
+func (u *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
 	query := db.Query()
 
 	// 非超管, 不可设置超管
@@ -196,6 +196,6 @@ func (r *AdminUser) GetRoleOptions(isAdministrator bool) []types.Options {
 }
 
 // QuickSave 快速保存
-func (r *AdminUser) QuickSave(user models.AdminUser) error {
+func (u *AdminUser) QuickSave(user models.AdminUser) error {
 	return db.Query().Select("enabled").Save(user).Error
 }

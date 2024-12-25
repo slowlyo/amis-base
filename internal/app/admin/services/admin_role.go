@@ -30,7 +30,7 @@ func (r *AdminRole) List(filters fiber.Map) ([]models.AdminRole, int64) {
 	}
 
 	query.Count(&count)
-	r.ListQuery(query, filters).Order("updated_at desc").Find(&items)
+	r.ListPaginate(query, filters).Order("updated_at desc").Find(&items)
 
 	return items, count
 }

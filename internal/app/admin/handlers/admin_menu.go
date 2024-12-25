@@ -51,7 +51,7 @@ func (m *AdminMenu) Save(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
-	role := models.AdminMenu{
+	menu := models.AdminMenu{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		ParentId:  uint(params.ParentId),
 		Name:      params.Name,
@@ -65,11 +65,11 @@ func (m *AdminMenu) Save(ctx *fiber.Ctx) error {
 		KeepAlive: params.KeepAlive,
 	}
 
-	if !strings.HasPrefix(role.Path, "http") {
-		role.Path = "/" + strings.TrimLeft(role.Path, "/")
+	if !strings.HasPrefix(menu.Path, "http") {
+		menu.Path = "/" + strings.TrimLeft(menu.Path, "/")
 	}
 
-	if err := m.Service.Save(role); err != nil {
+	if err := m.Service.Save(menu); err != nil {
 		return response.Error(ctx, err.Error())
 	}
 
@@ -110,13 +110,13 @@ func (m *AdminMenu) QuickSave(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
-	user := models.AdminMenu{
+	menu := models.AdminMenu{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		Visible:   params.Visible,
 		IsHome:    params.IsHome,
 	}
 
-	if err := m.Service.QuickSave(user); err != nil {
+	if err := m.Service.QuickSave(menu); err != nil {
 		return response.Error(ctx, err.Error())
 	}
 

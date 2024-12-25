@@ -103,7 +103,7 @@ func (m *AdminMenu) List(filters fiber.Map) ([]models.AdminMenu, int64) {
 	}
 
 	query.Count(&count)
-	m.ListQuery(query, filters).Order("sort asc").Find(&items)
+	m.ListGet(query, filters).Order("sort asc").Find(&items)
 
 	return m.GetTree(items, 0), count
 }
