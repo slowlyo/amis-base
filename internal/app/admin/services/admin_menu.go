@@ -72,7 +72,7 @@ func (m *AdminMenu) BuildRoutes(menus *[]models.AdminMenu, parentId uint) *[]typ
 
 // GetTree 获取树形菜单
 func (m *AdminMenu) GetTree(menus []models.AdminMenu, parentId int) []models.AdminMenu {
-	var result []models.AdminMenu
+	result := make([]models.AdminMenu, 0)
 	for _, item := range menus {
 		if item.ParentId == uint(parentId) {
 			children := m.GetTree(menus, int(item.ID))

@@ -17,7 +17,7 @@ type AdminPermission struct {
 
 // GetTree 获取树形权限
 func (p *AdminPermission) GetTree(menus []models.AdminPermission, parentId int) []models.AdminPermission {
-	var result []models.AdminPermission
+	result := make([]models.AdminPermission, 0)
 	for _, item := range menus {
 		if item.ParentId == uint(parentId) {
 			children := p.GetTree(menus, int(item.ID))
@@ -36,9 +36,7 @@ func (p *AdminPermission) List(filters fiber.Map) ([]models.AdminPermission, int
 	var count int64
 	var items []models.AdminPermission
 
-	query := db.Query().Model(models.AdminPermission{}).Preload("Page", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "name", "sign")
-	})
+	query := db.Query().Model(models.AdminPermission{})
 
 	if filters["name"].(string) != "" {
 		query.Where("name like ?", "%"+filters["name"].(string)+"%")

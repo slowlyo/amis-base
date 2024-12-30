@@ -5,6 +5,7 @@ import (
 	"amis-base/internal/app/admin/services"
 	base "amis-base/internal/models"
 	"amis-base/internal/pkg/response"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
 	"strings"
 )
@@ -34,25 +35,29 @@ func (p *AdminPermission) Index(ctx *fiber.Ctx) error {
 // Save 保存
 func (p *AdminPermission) Save(ctx *fiber.Ctx) error {
 	var params struct {
-		ID       int    `json:"id"`
-		ParentId int    `json:"parent_id"`
-		Name     string `json:"name"`
-		Sign     string `json:"sign"`
-		Api      string `json:"api"`
-		Sort     uint   `json:"sort"`
-		MenuIds  string `json:"menu_ids"`
+		ID       int         `json:"id"`
+		ParentId int         `json:"parent_id"`
+		Name     string      `json:"name"`
+		Sign     string      `json:"sign"`
+		Api      []fiber.Map `json:"api"`
+		Sort     uint        `json:"sort"`
+		MenuIds  string      `json:"menu_ids"`
 	}
 
 	if err := ctx.BodyParser(&params); err != nil {
 		return response.Error(ctx, "参数错误")
 	}
 
+	apis := slice.Map[fiber.Map](params.Api, func(index int, item fiber.Map) string {
+		return item["value"].(string)
+	})
+
 	permission := models.AdminPermission{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		ParentId:  uint(params.ParentId),
 		Name:      params.Name,
 		Sign:      params.Sign,
-		Api:       params.Api,
+		Api:       strings.Join(apis, ","),
 		Sort:      params.Sort,
 	}
 
