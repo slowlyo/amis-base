@@ -14,6 +14,10 @@ var authService services.Auth
 
 // Auth 认证中间件
 func Auth(ctx *fiber.Ctx) error {
+	if !viper.GetBool("admin.auth.enable") {
+		return ctx.Next()
+	}
+
 	// 白名单
 	exclude := viper.GetStringSlice("admin.auth.exclude")
 	if len(exclude) > 0 {
