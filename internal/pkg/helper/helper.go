@@ -34,6 +34,11 @@ func IsAllowRequest(rule, method, originalURL string) bool {
 	cleanRule := strings.TrimLeft(rule, "^")
 	methodList := []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
 
+	// 移除请求路径中的参数以及前缀
+	url := strings.TrimLeft(strings.Split(originalURL, "?")[0], "/")
+	url = strings.TrimLeft(url, strings.Split(url, "/")[0])
+	url = strings.TrimLeft(url, "/")
+
 	// 校验请求方式
 	for _, v := range methodList {
 		prefixUpper := v + ":"
@@ -50,13 +55,13 @@ func IsAllowRequest(rule, method, originalURL string) bool {
 
 	// 非正则匹配
 	if !strings.HasPrefix(rule, "^") {
-		return matchedMethod && (strings.TrimLeft(cleanRule, "/") == strings.TrimLeft(originalURL, "/"))
+		return matchedMethod && (strings.TrimLeft(cleanRule, "/") == url)
 	}
 
 	// 正则匹配
 	re, err := regexp.Compile(cleanRule)
 	if err == nil {
-		return matchedMethod && re.MatchString(originalURL)
+		return matchedMethod && re.MatchString(url)
 	}
 
 	return false

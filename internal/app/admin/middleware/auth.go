@@ -5,7 +5,6 @@ import (
 	"amis-base/internal/pkg/auth"
 	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 	"strings"
@@ -15,7 +14,6 @@ var authService services.Auth
 
 // Auth 认证中间件
 func Auth(ctx *fiber.Ctx) error {
-	fmt.Println(ctx.OriginalURL())
 	// 白名单
 	exclude := viper.GetStringSlice("admin.auth.exclude")
 	if len(exclude) > 0 {
