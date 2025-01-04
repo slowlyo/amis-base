@@ -4,6 +4,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 // BcryptString 加密
@@ -24,4 +26,38 @@ func MakeDir(path string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		_ = os.MkdirAll(path, os.ModePerm)
 	}
+}
+
+// IsAllowRequest 判断是否允许请求
+func IsAllowRequest(rule, method, originalURL string) bool {
+	matchedMethod := true
+	cleanRule := strings.TrimLeft(rule, "^")
+	methodList := []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "CONNECT", "TRACE"}
+
+	// 校验请求方式
+	for _, v := range methodList {
+		prefixUpper := v + ":"
+		prefixLower := strings.ToLower(prefixUpper)
+		// 如果匹配上了, 则说明规则中限定了请求方式
+		if strings.HasPrefix(cleanRule, prefixUpper) || strings.HasPrefix(cleanRule, prefixLower) {
+			// 请求方式是否匹配
+			matchedMethod = v == method
+			// 去除规则中的请求方式前缀
+			cleanRule = strings.TrimLeft(strings.TrimLeft(cleanRule, prefixLower), prefixUpper)
+			break
+		}
+	}
+
+	// 非正则匹配
+	if !strings.HasPrefix(rule, "^") {
+		return matchedMethod && (strings.TrimLeft(cleanRule, "/") == strings.TrimLeft(originalURL, "/"))
+	}
+
+	// 正则匹配
+	re, err := regexp.Compile(cleanRule)
+	if err == nil {
+		return matchedMethod && re.MatchString(originalURL)
+	}
+
+	return false
 }
