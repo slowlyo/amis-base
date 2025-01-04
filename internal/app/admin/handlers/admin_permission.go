@@ -5,6 +5,8 @@ import (
 	"amis-base/internal/app/admin/services"
 	base "amis-base/internal/models"
 	"amis-base/internal/pkg/response"
+	"encoding/json"
+	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
 	"strings"
@@ -52,12 +54,14 @@ func (p *AdminPermission) Save(ctx *fiber.Ctx) error {
 		return item["value"].(string)
 	})
 
+	apiJson, _ := json.Marshal(apis)
+
 	permission := models.AdminPermission{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		ParentId:  uint(params.ParentId),
 		Name:      params.Name,
 		Sign:      params.Sign,
-		Api:       strings.Join(apis, ","),
+		Api:       string(apiJson),
 		Sort:      params.Sort,
 	}
 
@@ -70,7 +74,37 @@ func (p *AdminPermission) Save(ctx *fiber.Ctx) error {
 
 // Detail 获取详情
 func (p *AdminPermission) Detail(ctx *fiber.Ctx) error {
-	return response.Success(ctx, p.Service.GetDetailById(ctx.QueryInt("id")))
+	permission := p.Service.GetDetailById(ctx.QueryInt("id"))
+
+	menuIds := slice.Map(permission.Menus, func(_ int, item models.AdminMenu) string {
+		return convertor.ToString(item.ID)
+	})
+
+	data := fiber.Map{
+		"id":        permission.ID,
+		"name":      permission.Name,
+		"sign":      permission.Sign,
+		"parent_id": permission.ParentId,
+		"sort":      permission.Sort,
+		"menu_ids":  strings.Join(menuIds, ","),
+		"api": func() []fiber.Map {
+			if permission.Api == "" {
+				return []fiber.Map{}
+			}
+
+			apis := make([]string, 0)
+			err := json.Unmarshal([]byte(permission.Api), &apis)
+			if err != nil {
+				return []fiber.Map{}
+			}
+
+			return slice.Map(apis, func(_ int, item string) fiber.Map {
+				return fiber.Map{"value": item}
+			})
+		}(),
+	}
+
+	return response.Success(ctx, data)
 }
 
 // Destroy 删除

@@ -120,7 +120,7 @@ func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) e
 func (p *AdminPermission) GetDetailById(id int) models.AdminPermission {
 	var permission models.AdminPermission
 
-	db.Query().First(&permission, id)
+	db.Query().Preload("Menus").First(&permission, id)
 
 	return permission
 }

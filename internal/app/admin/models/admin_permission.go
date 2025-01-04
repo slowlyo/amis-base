@@ -6,7 +6,7 @@ type AdminPermission struct {
 	base.BaseModel
 
 	ParentId uint   `gorm:"type:int(11);not null;default:0" json:"parent_id"`
-	Name     string `gorm:"type:varchar(255);not null;unique" json:"name"`
+	Name     string `gorm:"type:varchar(255);not null" json:"name"`
 	Sign     string `gorm:"type:varchar(255);not null;unique" json:"sign"`
 	Api      string `gorm:"type:text" json:"api"`
 	Sort     uint   `gorm:"type:int(11);not null;default:0" json:"sort"`
