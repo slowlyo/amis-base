@@ -12,6 +12,8 @@ func BootRoutes(app *fiber.App) {
 
 	// 认证中间件
 	adminRoute.Use(middleware.Auth)
+	// 鉴权中间件
+	adminRoute.Use(middleware.Permission)
 
 	// 系统相关
 	systemHandler := handlers.AdminSystem{}
