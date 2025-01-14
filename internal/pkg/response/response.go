@@ -2,6 +2,7 @@ package response
 
 import "github.com/gofiber/fiber/v2"
 
+// Success 响应成功
 func Success(ctx *fiber.Ctx, data any) error {
 	return ctx.JSON(fiber.Map{
 		"status":            0,
@@ -12,6 +13,7 @@ func Success(ctx *fiber.Ctx, data any) error {
 	})
 }
 
+// Ok 响应成功消息
 func Ok(ctx *fiber.Ctx, msg string) error {
 	data := fiber.Map{
 		"status":            0,
@@ -24,6 +26,7 @@ func Ok(ctx *fiber.Ctx, msg string) error {
 	return ctx.JSON(data)
 }
 
+// Fail 响应失败
 func Fail(ctx *fiber.Ctx, data any) error {
 	return ctx.JSON(fiber.Map{
 		"status": 1,
@@ -33,6 +36,7 @@ func Fail(ctx *fiber.Ctx, data any) error {
 	})
 }
 
+// Error 响应失败消息
 func Error(ctx *fiber.Ctx, msg string) error {
 	data := fiber.Map{
 		"status": 1,
@@ -44,11 +48,22 @@ func Error(ctx *fiber.Ctx, msg string) error {
 	return ctx.JSON(data)
 }
 
+// UnAuthorized 未登录
 func UnAuthorized(ctx *fiber.Ctx) error {
 	return ctx.JSON(fiber.Map{
 		"status": 1,
 		"code":   401,
 		"msg":    "请先登录",
+		"data":   fiber.Map{},
+	})
+}
+
+// Forbidden 无权访问
+func Forbidden(ctx *fiber.Ctx) error {
+	return ctx.JSON(fiber.Map{
+		"status": 1,
+		"code":   403,
+		"msg":    "无权访问",
 		"data":   fiber.Map{},
 	})
 }
