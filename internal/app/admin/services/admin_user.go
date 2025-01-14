@@ -70,11 +70,11 @@ func (u *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int
 // Save 保存
 func (u *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 	// 角色信息
-	insertRoles := func(userId uint) error {
+	insertRoles := func(tx *gorm.DB, userId uint) error {
 		var err error
 		// 如果是修改, 清除原有角色
 		if data.ID == 0 {
-			err = db.Query().Table("admin_user_role").Where("admin_user_id = ?", userId).Delete(nil).Error
+			err = tx.Table("admin_user_role").Where("admin_user_id = ?", userId).Delete(nil).Error
 		}
 
 		if err != nil {
@@ -93,7 +93,7 @@ func (u *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 				"admin_role_id": roleId,
 			})
 		}
-		return db.Query().Table("admin_user_role").Create(insertRoles).Error
+		return tx.Table("admin_user_role").Create(insertRoles).Error
 	}
 
 	query := db.Query().Where("username = ?", data.Username)
@@ -104,11 +104,11 @@ func (u *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 		}
 
 		return db.Query().Transaction(func(tx *gorm.DB) error {
-			if err := db.Query().Create(&data).Error; err != nil {
+			if err := tx.Create(&data).Error; err != nil {
 				return err
 			}
 
-			return insertRoles(data.ID)
+			return insertRoles(tx, data.ID)
 		})
 	}
 
@@ -118,17 +118,17 @@ func (u *AdminUser) Save(data models.AdminUser, roleIdChar string) error {
 
 	return db.Query().Transaction(func(tx *gorm.DB) error {
 		// 清除原有角色关联信息
-		del := db.Query().Table("admin_user_role").Where("admin_user_id = ?", data.ID).Delete(nil)
+		del := tx.Table("admin_user_role").Where("admin_user_id = ?", data.ID).Delete(nil)
 		if del.Error != nil {
 			return del.Error
 		}
 
 		// 保存角色关联信息
-		if err := insertRoles(data.ID); err != nil {
+		if err := insertRoles(tx, data.ID); err != nil {
 			return err
 		}
 
-		saveQuery := db.Query()
+		saveQuery := tx
 
 		// 如果密码为空, 则不保存
 		if data.Password == "" {
@@ -162,13 +162,13 @@ func (u *AdminUser) GetDetailById(id int) fiber.Map {
 func (u *AdminUser) Delete(ids []string) error {
 	return db.Query().Transaction(func(tx *gorm.DB) error {
 		// 删除用户角色关联信息
-		result := db.Query().Table("admin_user_role").Where("admin_user_id in ?", ids).Delete(nil)
+		result := tx.Table("admin_user_role").Where("admin_user_id in ?", ids).Delete(nil)
 
 		if result.Error != nil {
 			return result.Error
 		}
 
-		return db.Query().Where("id in ?", ids).Delete(&models.AdminUser{}).Error
+		return tx.Where("id in ?", ids).Delete(&models.AdminUser{}).Error
 	})
 }
 

@@ -54,11 +54,11 @@ func (p *AdminPermission) List(filters fiber.Map) ([]models.AdminPermission, int
 // Save 保存
 func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) error {
 	// 菜单信息
-	insertMenus := func(permissionId uint) error {
+	insertMenus := func(tx *gorm.DB, permissionId uint) error {
 		var err error
 		// 如果是修改, 清除原有菜单
 		if data.ID == 0 {
-			err = db.Query().Table("admin_menu_permission").Where("admin_permission_id = ?", permissionId).Delete(nil).Error
+			err = tx.Table("admin_menu_permission").Where("admin_permission_id = ?", permissionId).Delete(nil).Error
 		}
 
 		if err != nil {
@@ -77,7 +77,7 @@ func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) e
 				"admin_menu_id":       menuId,
 			})
 		}
-		return db.Query().Table("admin_menu_permission").Create(insertMenus).Error
+		return tx.Table("admin_menu_permission").Create(insertMenus).Error
 	}
 
 	query := db.Query().Where("sign = ?", data.Sign)
@@ -88,11 +88,11 @@ func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) e
 		}
 
 		return db.Query().Transaction(func(tx *gorm.DB) error {
-			if err := db.Query().Create(&data).Error; err != nil {
+			if err := tx.Create(&data).Error; err != nil {
 				return err
 			}
 
-			return insertMenus(data.ID)
+			return insertMenus(tx, data.ID)
 		})
 	}
 
@@ -102,17 +102,17 @@ func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) e
 
 	return db.Query().Transaction(func(tx *gorm.DB) error {
 		// 清除原有菜单关联信息
-		del := db.Query().Table("admin_menu_permission").Where("admin_permission_id = ?", data.ID).Delete(nil)
+		del := tx.Table("admin_menu_permission").Where("admin_permission_id = ?", data.ID).Delete(nil)
 		if del.Error != nil {
 			return del.Error
 		}
 
 		// 保存菜单关联信息
-		if err := insertMenus(data.ID); err != nil {
+		if err := insertMenus(tx, data.ID); err != nil {
 			return err
 		}
 
-		return db.Query().Save(&data).Error
+		return tx.Save(&data).Error
 	})
 }
 
@@ -131,12 +131,12 @@ func (p *AdminPermission) Delete(ids []string) error {
 		var err error
 
 		// 删除权限权限关联信息
-		err = db.Query().Table("admin_menu_permission").Where("admin_permission_id in ?", ids).Delete(nil).Error
+		err = tx.Table("admin_menu_permission").Where("admin_permission_id in ?", ids).Delete(nil).Error
 		if err != nil {
 			return err
 		}
 
-		return db.Query().Where("id in ?", ids).Delete(&models.AdminPermission{}).Error
+		return tx.Where("id in ?", ids).Delete(&models.AdminPermission{}).Error
 	})
 }
 
@@ -168,13 +168,17 @@ func (p *AdminPermission) computeSort(menus []models.AdminPermission, sortMap ma
 }
 
 // GetParentOptions 获取父级权限选项 (树)
-func (p *AdminPermission) GetParentOptions() []models.AdminPermission {
-	var menus []models.AdminPermission
+func (p *AdminPermission) GetParentOptions(appendNoneOption bool) []models.AdminPermission {
+	var permissions []models.AdminPermission
 
-	db.Query().Model(models.AdminPermission{}).Order("sort asc").Find(&menus)
+	db.Query().Model(models.AdminPermission{}).Order("sort asc").Find(&permissions)
+
+	if !appendNoneOption {
+		return p.GetTree(permissions, 0)
+	}
 
 	return append([]models.AdminPermission{{
 		BaseModel: base.BaseModel{ID: 0},
 		Name:      "无",
-	}}, p.GetTree(menus, 0)...)
+	}}, p.GetTree(permissions, 0)...)
 }

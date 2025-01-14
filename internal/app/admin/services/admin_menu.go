@@ -18,7 +18,7 @@ type AdminMenu struct {
 	baseService
 }
 
-func (m *AdminMenu) GetUserMenus(user models.AdminUser) *[]models.AdminMenu {
+func (m *AdminMenu) GetUserMenus(user *models.AdminUser) *[]models.AdminMenu {
 	var menus []models.AdminMenu
 
 	query := db.Query().Model(models.AdminMenu{})
@@ -152,12 +152,12 @@ func (m *AdminMenu) Delete(ids []string) error {
 		var err error
 
 		// 删除菜单权限关联信息
-		err = db.Query().Table("admin_menu_permission").Where("admin_menu_id in ?", ids).Delete(nil).Error
+		err = tx.Table("admin_menu_permission").Where("admin_menu_id in ?", ids).Delete(nil).Error
 		if err != nil {
 			return err
 		}
 
-		return db.Query().Where("id in ?", ids).Delete(&models.AdminMenu{}).Error
+		return tx.Where("id in ?", ids).Delete(&models.AdminMenu{}).Error
 	})
 }
 

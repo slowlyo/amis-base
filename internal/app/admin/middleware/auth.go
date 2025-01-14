@@ -14,7 +14,7 @@ var authService services.Auth
 
 // Auth 认证中间件
 func Auth(ctx *fiber.Ctx) error {
-	if !viper.GetBool("admin.auth.enable") {
+	if !viper.GetBool("admin.auth.enabled") {
 		return ctx.Next()
 	}
 

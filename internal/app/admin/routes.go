@@ -48,10 +48,12 @@ func bootSystemRoutes(adminRoute fiber.Router) {
 	systemRoute.Route("/roles", func(router fiber.Router) {
 		handler := handlers.AdminRole{}
 
-		router.Get("", handler.Index)           // 列表
-		router.Post("", handler.Save)           // 新增/修改
-		router.Get("/detail", handler.Detail)   // 详情
-		router.Post("/delete", handler.Destroy) // 删除
+		router.Get("", handler.Index)                        // 列表
+		router.Post("", handler.Save)                        // 新增/修改
+		router.Get("/detail", handler.Detail)                // 详情
+		router.Post("/delete", handler.Destroy)              // 删除
+		router.Get("/permissions", handler.Permissions)      // 获取权限
+		router.Post("/permissions", handler.SavePermissions) // 保存权限
 	})
 
 	// 管理员

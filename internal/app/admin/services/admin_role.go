@@ -69,17 +69,50 @@ func (r *AdminRole) Delete(ids []string) error {
 		var err error
 
 		// 删除用户角色关联信息
-		err = db.Query().Table("admin_user_role").Where("admin_role_id in ?", ids).Delete(nil).Error
+		err = tx.Table("admin_user_role").Where("admin_role_id in ?", ids).Delete(nil).Error
 		if err != nil {
 			return err
 		}
 
 		// 删除角色权限关联信息
-		err = db.Query().Table("admin_role_permission").Where("admin_role_id in ?", ids).Delete(nil).Error
+		err = tx.Table("admin_role_permission").Where("admin_role_id in ?", ids).Delete(nil).Error
 		if err != nil {
 			return err
 		}
 
-		return db.Query().Where("id in ?", ids).Delete(&models.AdminRole{}).Error
+		return tx.Where("id in ?", ids).Delete(&models.AdminRole{}).Error
+	})
+}
+
+// GetPermissionsById 根据角色id获取权限
+func (r *AdminRole) GetPermissionsById(id int) []map[string]interface{} {
+	var list []map[string]interface{}
+
+	db.Query().
+		Table("admin_role_permission").
+		Where("admin_role_id = ?", id).
+		Select("admin_permission_id as id").
+		Find(&list)
+
+	return list
+}
+
+// SavePermissions 保存权限
+func (r *AdminRole) SavePermissions(id int, permissions []int) error {
+	return db.Query().Transaction(func(tx *gorm.DB) error {
+		err := tx.Table("admin_role_permission").Where("admin_role_id = ?", id).Delete(nil).Error
+		if err != nil {
+			return err
+		}
+
+		insert := make([]map[string]interface{}, 0)
+		for _, v := range permissions {
+			insert = append(insert, map[string]interface{}{
+				"admin_role_id":       id,
+				"admin_permission_id": v,
+			})
+		}
+
+		return tx.Table("admin_role_permission").Create(insert).Error
 	})
 }

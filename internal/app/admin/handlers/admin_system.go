@@ -52,14 +52,21 @@ func (s *AdminSystem) SaveSettings(ctx *fiber.Ctx) error {
 
 // Menus 菜单
 func (s *AdminSystem) Menus(ctx *fiber.Ctx) error {
-	user := ctx.Locals("user").(models.AdminUser)
-	menus := s.MenuService.GetUserMenus(user)
+	var user models.AdminUser
+	if ctx.Locals("user") != nil {
+		user = ctx.Locals("user").(models.AdminUser)
+	}
+	menus := s.MenuService.GetUserMenus(&user)
 
 	return response.Success(ctx, *s.MenuService.BuildRoutes(menus, 0))
 }
 
 // User 获取用户信息
 func (s *AdminSystem) User(ctx *fiber.Ctx) error {
+	if !viper.GetBool("admin.auth.enabled") {
+		return response.Success(ctx, fiber.Map{"name": "", "avatar": ""})
+	}
+
 	user := ctx.Locals("user").(models.AdminUser)
 
 	return response.Success(ctx, fiber.Map{

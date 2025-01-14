@@ -56,10 +56,12 @@ func (r *AdminRole) Save(ctx *fiber.Ctx) error {
 	return response.Ok(ctx, "保存成功")
 }
 
+// Detail 详情
 func (r *AdminRole) Detail(ctx *fiber.Ctx) error {
 	return response.Success(ctx, r.Service.GetDetailById(ctx.QueryInt("id")))
 }
 
+// Destroy 删除
 func (r *AdminRole) Destroy(ctx *fiber.Ctx) error {
 	var params idsReq
 	if err := ctx.BodyParser(&params); err != nil {
@@ -75,4 +77,28 @@ func (r *AdminRole) Destroy(ctx *fiber.Ctx) error {
 	}
 
 	return response.Ok(ctx, "删除成功")
+}
+
+// Permissions 获取角色权限
+func (r *AdminRole) Permissions(ctx *fiber.Ctx) error {
+	return response.Success(ctx, fiber.Map{
+		"permissions": r.Service.GetPermissionsById(ctx.QueryInt("id")),
+	})
+}
+
+// SavePermissions 保存角色权限
+func (r *AdminRole) SavePermissions(ctx *fiber.Ctx) error {
+	var params struct {
+		ID          int   `json:"id"`
+		Permissions []int `json:"permissions"`
+	}
+	if err := ctx.BodyParser(&params); err != nil {
+		return response.Error(ctx, "参数错误")
+	}
+
+	if err := r.Service.SavePermissions(params.ID, params.Permissions); err != nil {
+		return response.Error(ctx, err.Error())
+	}
+
+	return response.Ok(ctx, "保存成功")
 }

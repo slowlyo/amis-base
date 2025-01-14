@@ -143,5 +143,5 @@ func (p *AdminPermission) SaveSort(ctx *fiber.Ctx) error {
 
 // ParentOptions 获取父级权限选项
 func (p *AdminPermission) ParentOptions(ctx *fiber.Ctx) error {
-	return response.Success(ctx, p.Service.GetParentOptions())
+	return response.Success(ctx, p.Service.GetParentOptions(ctx.QueryBool("append_none_option", true)))
 }
