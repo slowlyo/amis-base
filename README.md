@@ -12,5 +12,5 @@ go mod tidy
 cp config/config.example.yaml config/config.yaml
 
 # run
-go run cmd/amis-base/main.go
+go run cmd/amis-base/main.go server
 ```
