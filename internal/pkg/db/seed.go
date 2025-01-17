@@ -5,10 +5,17 @@ import (
 	baseModel "amis-base/internal/models"
 	"amis-base/internal/pkg/helper"
 	"encoding/json"
+	"strings"
 )
 
 // Seed 填充初始数据
 func Seed() {
+	// 设置
+	go seedSettings()
+
+	// 页面
+	go seedPages()
+
 	// 用户
 	go seedUsers()
 
@@ -20,12 +27,6 @@ func Seed() {
 
 	// 权限
 	go seedPermissions()
-
-	// 设置
-	go seedSettings()
-
-	// 页面
-	go seedPages()
 }
 
 // 判断数据表是否为空
@@ -116,14 +117,6 @@ func seedMenus() {
 			Visible:   1,
 			PageSign:  "admin_menu",
 		},
-		{
-			BaseModel: baseModel.BaseModel{ID: 7},
-			Name:      "个人中心",
-			Icon:      "ph:circle",
-			Path:      "/user",
-			Visible:   0,
-			PageSign:  "user",
-		},
 	})
 }
 
@@ -211,13 +204,86 @@ func seedPages(force ...bool) {
 
 // 填充权限
 func seedPermissions() {
+	// todo
+	db.Exec("truncate table admin_permissions")
+
 	if !isNull(models.AdminPermission{}) {
 		return
 	}
 
-	db.Create(&[]models.AdminPermission{
-		{BaseModel: baseModel.BaseModel{ID: 1}, Name: "控制台", Sign: "dashboard", Api: "[]"},
-		{BaseModel: baseModel.BaseModel{ID: 2}, Name: "系统管理", Sign: "system", Api: "[]"},
-		{BaseModel: baseModel.BaseModel{ID: 3}, Name: "管理员", Sign: "system.admin_user", Api: `["get:/system/users"]`},
-	})
+	// 填充菜单权限
+	var menus []models.AdminMenu
+	db.Model(&models.AdminMenu{}).Find(&menus)
+
+	insertPermissions := make([]models.AdminPermission, 0) // 权限
+	withMenus := make([]map[string]interface{}, 0)         // 菜单和权限关联
+	for _, menu := range menus {
+		insertPermissions = append(insertPermissions, models.AdminPermission{
+			Name:     menu.Name,
+			ParentId: menu.ParentId,
+			Sign:     strings.ReplaceAll(strings.TrimLeft(menu.Path, "/"), "/", "."),
+			Api:      `["get:` + strings.ReplaceAll(menu.Path, "admin_", "") + `s"]`,
+		})
+
+		withMenus = append(withMenus, map[string]interface{}{
+			"admin_menu_id":       menu.ID,
+			"admin_permission_id": menu.ID,
+		})
+	}
+
+	db.Model(&models.AdminPermission{}).Create(insertPermissions)
+
+	db.Exec("truncate table admin_menu_permission") // 清除关联表数据
+	db.Table("admin_menu_permission").Create(withMenus)
+
+	// 操作权限
+	var permissions []models.AdminPermission
+	db.Model(&models.AdminPermission{}).Find(&permissions)
+
+	insertPermissions = make([]models.AdminPermission, 0)
+	for _, permission := range permissions {
+		if !strings.HasPrefix(permission.Sign, "system.") {
+			continue
+		}
+
+		// todo: parent_options / 设置权限功能 / 快速编辑
+		insertPermissions = append(insertPermissions, []models.AdminPermission{
+			// 新增
+			{
+				Name:     "新增数据",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".create",
+				Api:      strings.ReplaceAll(permission.Api, "get:", "post:"),
+			},
+			// 修改
+			{
+				Name:     "获取详情",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".show",
+				Api:      strings.ReplaceAll(permission.Api, `"]`, `/detail"]`),
+			},
+			{
+				Name:     "修改数据",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".update",
+				Api:      strings.ReplaceAll(permission.Api, "get:", "post:"),
+			},
+			// 删除
+			{
+				Name:     "删除数据",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".delete",
+				Api:      strings.ReplaceAll(strings.ReplaceAll(permission.Api, `"]`, `/delete"]`), "get:", "post:"),
+			},
+			// 批量删除
+			{
+				Name:     "批量删除数据",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".bulk_delete",
+				Api:      strings.ReplaceAll(strings.ReplaceAll(permission.Api, `"]`, `/delete"]`), "get:", "post:"),
+			},
+		}...)
+	}
+
+	db.Model(&models.AdminPermission{}).Create(insertPermissions)
 }
