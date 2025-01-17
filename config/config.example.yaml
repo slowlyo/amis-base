@@ -56,11 +56,15 @@ admin:
       #     post:/system/menus
       # 使用正则匹配:
       #     ^post:/system/menus
-      - "POST:/login"
-      - "GET:/settings"
+      - "post:/login"
+      - "get:/settings"
   # 鉴权
   permission:
     # 是否启用
     enabled: true
     # 白名单
     exclude:
+      - "get:/user"
+      - "get:/menus"
+      - "get:/settings"
+      - "get:/page_schema"
