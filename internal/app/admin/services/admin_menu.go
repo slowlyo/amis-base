@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/cryptor"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
@@ -24,15 +25,25 @@ func (m *AdminMenu) GetUserMenus(user *models.AdminUser) *[]models.AdminMenu {
 	query := db.Query().Model(models.AdminMenu{})
 
 	if !user.IsSuperAdmin() {
-		// todo 权限
+		subQuery := db.Query().
+			Table("admin_menu_permission").
+			Where("admin_permission_id in (?)", slice.Map(user.Permissions(), func(_ int, item models.AdminPermission) uint {
+				return item.ID
+			})).
+			Select("admin_menu_id")
+
+		query.Where("id in (?)", subQuery)
 	}
 
 	query.Order("sort asc").Find(&menus)
 
 	// 追加开发者菜单
-	if viper.GetBool("app.dev") {
+	if viper.GetBool("app.dev") && user.IsSuperAdmin() {
 		menus = append(menus, models.AdminMenu{}.DevMenus()...)
 	}
+
+	// 追加系统菜单
+	menus = append(menus, models.AdminMenu{}.SystemMenus()...)
 
 	return &menus
 }
@@ -110,6 +121,28 @@ func (m *AdminMenu) List(filters fiber.Map) ([]models.AdminMenu, int64) {
 
 // Save 保存
 func (m *AdminMenu) Save(data models.AdminMenu) error {
+	if data.ParentId != 0 {
+		if data.ParentId == data.ID {
+			return errors.New("父级菜单不能选择自己")
+		}
+
+		parentId := data.ParentId
+		for {
+			parentMenu := models.AdminPermission{}
+			db.Query().Where("id = ?", parentId).First(&parentMenu)
+
+			if parentMenu.ID == data.ID {
+				return errors.New("不可选择子菜单限作为父级")
+			}
+
+			if parentMenu.ParentId == 0 {
+				break
+			}
+
+			parentId = parentMenu.ParentId
+		}
+	}
+
 	query := db.Query().Where("path = ?", data.Path)
 
 	if data.ID == 0 {

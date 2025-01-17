@@ -3,6 +3,7 @@ package models
 import (
 	"amis-base/internal/app/admin/types"
 	base "amis-base/internal/models"
+	"encoding/json"
 	"github.com/duke-git/lancet/v2/slice"
 )
 
@@ -22,4 +23,30 @@ func (u *AdminUser) IsSuperAdmin() bool {
 	return slice.Some(u.Roles, func(index int, item AdminRole) bool {
 		return item.Sign == types.SuperAdminSign
 	})
+}
+
+// Permissions 获取用户权限
+func (u *AdminUser) Permissions() []AdminPermission {
+	result := make([]AdminPermission, 0)
+	for _, role := range u.Roles {
+		for _, permission := range role.Permissions {
+			result = append(result, permission)
+		}
+	}
+
+	return result
+}
+
+// PermissionApiRules 获取用户权限的 api 规则
+func (u *AdminUser) PermissionApiRules() []string {
+	result := make([]string, 0)
+	permissions := u.Permissions()
+	for _, permission := range permissions {
+		var apis []string
+		if err := json.Unmarshal([]byte(permission.Api), &apis); err == nil {
+			result = append(result, apis...)
+		}
+	}
+
+	return result
 }

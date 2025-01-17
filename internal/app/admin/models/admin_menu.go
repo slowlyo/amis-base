@@ -27,20 +27,33 @@ type AdminMenu struct {
 func (AdminMenu) DevMenus() []AdminMenu {
 	return []AdminMenu{
 		{
-			BaseModel: base.BaseModel{ID: 100000},
+			BaseModel: base.BaseModel{ID: 100001},
 			Name:      "开发",
 			Icon:      "fluent:window-dev-tools-20-regular",
 			Path:      "/dev",
 			Visible:   1,
 		},
 		{
-			BaseModel: base.BaseModel{ID: 3},
-			ParentId:  100000,
+			BaseModel: base.BaseModel{ID: 100002},
+			ParentId:  100001,
 			Name:      "页面管理",
 			Icon:      "iconoir:multiple-pages",
 			Path:      "/dev/admin_page",
 			Visible:   1,
 			PageSign:  "admin_page",
+		},
+	}
+}
+
+// SystemMenus 系统菜单
+func (AdminMenu) SystemMenus() []AdminMenu {
+	return []AdminMenu{
+		{
+			BaseModel: base.BaseModel{ID: 100000},
+			Name:      "个人中心",
+			Path:      "/user_center",
+			Visible:   0,
+			PageSign:  "user_center",
 		},
 	}
 }

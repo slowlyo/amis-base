@@ -53,6 +53,28 @@ func (p *AdminPermission) List(filters fiber.Map) ([]models.AdminPermission, int
 
 // Save 保存
 func (p *AdminPermission) Save(data models.AdminPermission, menuIdChar string) error {
+	if data.ParentId != 0 {
+		if data.ParentId == data.ID {
+			return errors.New("父级权限不能选择自己")
+		}
+
+		parentId := data.ParentId
+		for {
+			parentPermission := models.AdminPermission{}
+			db.Query().Where("id = ?", parentId).First(&parentPermission)
+
+			if parentPermission.ID == data.ID {
+				return errors.New("不可选择子级权限作为父级")
+			}
+
+			if parentPermission.ParentId == 0 {
+				break
+			}
+
+			parentId = parentPermission.ParentId
+		}
+	}
+
 	// 菜单信息
 	insertMenus := func(tx *gorm.DB, permissionId uint) error {
 		var err error
