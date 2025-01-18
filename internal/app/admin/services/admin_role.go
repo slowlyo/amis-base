@@ -5,6 +5,7 @@ import (
 	"amis-base/internal/app/admin/types"
 	"amis-base/internal/pkg/db"
 	"errors"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -85,7 +86,7 @@ func (r *AdminRole) Delete(ids []string) error {
 }
 
 // GetPermissionsById 根据角色id获取权限
-func (r *AdminRole) GetPermissionsById(id int) []map[string]interface{} {
+func (r *AdminRole) GetPermissionsById(id int) []int {
 	var list []map[string]interface{}
 
 	db.Query().
@@ -94,7 +95,9 @@ func (r *AdminRole) GetPermissionsById(id int) []map[string]interface{} {
 		Select("admin_permission_id as id").
 		Find(&list)
 
-	return list
+	return slice.Map(list, func(_ int, item map[string]interface{}) int {
+		return int(item["id"].(uint64))
+	})
 }
 
 // SavePermissions 保存权限
@@ -111,6 +114,10 @@ func (r *AdminRole) SavePermissions(id int, permissions []int) error {
 				"admin_role_id":       id,
 				"admin_permission_id": v,
 			})
+		}
+
+		if len(insert) == 0 {
+			return nil
 		}
 
 		return tx.Table("admin_role_permission").Create(insert).Error

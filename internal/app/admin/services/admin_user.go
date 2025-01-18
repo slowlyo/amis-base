@@ -28,7 +28,7 @@ func (u *AdminUser) List(filters fiber.Map, isSuperAdmin bool) ([]fiber.Map, int
 		query = query.
 			Joins("left join admin_user_role on admin_users.id = admin_user_role.admin_user_id").
 			Where(
-				"admin_role_id not in (?)",
+				"(admin_role_id not in (?) or admin_role_id is null)",
 				db.Query().Model(models.AdminRole{}).Where("sign", types.SuperAdminSign).Select("id"),
 			)
 	}

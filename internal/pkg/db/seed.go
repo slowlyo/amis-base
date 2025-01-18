@@ -19,14 +19,16 @@ func Seed() {
 	// 用户
 	go seedUsers()
 
-	// 菜单
-	go seedMenus()
+	go func() {
+		// 菜单
+		seedMenus()
 
-	// 角色
-	go seedRoles()
+		// 权限
+		seedPermissions()
 
-	// 权限
-	go seedPermissions()
+		// 角色
+		seedRoles()
+	}()
 }
 
 // 判断数据表是否为空
@@ -128,10 +130,30 @@ func seedRoles() {
 
 	db.Create(&[]models.AdminRole{
 		{
-			Name: "超级管理员",
-			Sign: "administrator",
+			BaseModel: baseModel.BaseModel{ID: 1},
+			Name:      "超级管理员",
+			Sign:      "administrator",
+		},
+		{
+			BaseModel: baseModel.BaseModel{ID: 2},
+			Name:      "全权限",
+			Sign:      "full_permissions",
 		},
 	})
+
+	var permissions []models.AdminPermission
+	db.Model(&models.AdminPermission{}).Find(&permissions)
+
+	withPermissions := make([]map[string]interface{}, 0) // 菜单和权限关联
+	for _, permission := range permissions {
+		withPermissions = append(withPermissions, map[string]interface{}{
+			"admin_role_id":       2,
+			"admin_permission_id": permission.ID,
+		})
+	}
+
+	db.Exec("truncate table admin_role_permission") // 清除关联表数据
+	db.Table("admin_role_permission").Create(withPermissions)
 }
 
 // 填充设置
@@ -204,9 +226,6 @@ func seedPages(force ...bool) {
 
 // 填充权限
 func seedPermissions() {
-	// todo
-	//db.Exec("truncate table admin_permissions")
-
 	if !isNull(models.AdminPermission{}) {
 		return
 	}
@@ -246,14 +265,40 @@ func seedPermissions() {
 			continue
 		}
 
-		// todo: parent_options / 设置权限功能 / 快速编辑
+		formApi := func() string {
+			api := strings.ReplaceAll(permission.Api, "get:", "post:")
+
+			if strings.HasSuffix(permission.Sign, "admin_user") {
+				api = strings.ReplaceAll(api, `"]`, `", "get:/system/users/role_options"]`)
+				api = strings.ReplaceAll(api, `"]`, `", "post:/system/users/quick_save"]`)
+			}
+
+			if strings.HasSuffix(permission.Sign, "admin_permission") {
+				api = strings.ReplaceAll(api, `"]`, `", "get:/system/permissions/parent_options"]`)
+				api = strings.ReplaceAll(api, `"]`, `", "post:/system/permissions/sort"]`)
+			}
+
+			if strings.HasSuffix(permission.Sign, "admin_menu") {
+				api = strings.ReplaceAll(api, `"]`, `", "get:/system/menus/parent_options"]`)
+				api = strings.ReplaceAll(api, `"]`, `", "get:/system/menus/page_options"]`)
+				api = strings.ReplaceAll(api, `"]`, `", "post:/system/menus/quick_save"]`)
+				api = strings.ReplaceAll(api, `"]`, `", "post:/system/menus/sort"]`)
+			}
+
+			if strings.HasSuffix(permission.Sign, "admin_permission") || strings.HasSuffix(permission.Sign, "admin_menu") {
+				api = strings.ReplaceAll(api, `"]`, `", "get:/system/menus/parent_options"]`)
+			}
+
+			return api
+		}()
+
 		insertPermissions = append(insertPermissions, []models.AdminPermission{
 			// 新增
 			{
 				Name:     "新增数据",
 				ParentId: permission.ID,
 				Sign:     permission.Sign + ".create",
-				Api:      strings.ReplaceAll(permission.Api, "get:", "post:"),
+				Api:      formApi,
 			},
 			// 修改
 			{
@@ -266,7 +311,7 @@ func seedPermissions() {
 				Name:     "修改数据",
 				ParentId: permission.ID,
 				Sign:     permission.Sign + ".update",
-				Api:      strings.ReplaceAll(permission.Api, "get:", "post:"),
+				Api:      formApi,
 			},
 			// 删除
 			{
@@ -283,6 +328,21 @@ func seedPermissions() {
 				Api:      strings.ReplaceAll(strings.ReplaceAll(permission.Api, `"]`, `/delete"]`), "get:", "post:"),
 			},
 		}...)
+
+		if strings.HasSuffix(permission.Sign, "admin_role") {
+			insertPermissions = append(insertPermissions, models.AdminPermission{
+				Name:     "设置权限",
+				ParentId: permission.ID,
+				Sign:     permission.Sign + ".edit_permission",
+				Api: func() string {
+					api := strings.ReplaceAll(permission.Api, `"]`, `", "get:/system/roles/permissions"]`)
+					api = strings.ReplaceAll(api, `"]`, `", "post:/system/roles/permissions"]`)
+					api = strings.ReplaceAll(api, `"]`, `", "get:/system/permissions/parent_options"]`)
+
+					return api
+				}(),
+			})
+		}
 	}
 
 	db.Model(&models.AdminPermission{}).Create(insertPermissions)
