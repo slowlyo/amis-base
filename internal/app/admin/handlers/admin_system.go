@@ -151,24 +151,9 @@ func (s *AdminSystem) PageSchema(ctx *fiber.Ctx) error {
 	pageSign := ctx.Query("sign")
 	schemaStr := s.PageService.GetSchemaBySign(pageSign)
 
-	if schemaStr == nil {
-		return response.Success(ctx, fiber.Map{
-			"type": "page",
-			"body": fiber.Map{
-				"type":     "alert",
-				"showIcon": true,
-				"level":    "danger",
-				"body":     fmt.Sprintf("页面 %s 不存在", pageSign),
-			},
-		})
+	if schemaStr == "" {
+		return response.Error(ctx, "页面不存在")
 	}
 
-	var schema any
-
-	err := json.Unmarshal([]byte(schemaStr), &schema)
-	if err != nil {
-		return response.Error(ctx, "页面结构解析失败")
-	}
-
-	return response.Success(ctx, schema)
+	return response.Success(ctx, helper.JsonDecode[any](schemaStr))
 }

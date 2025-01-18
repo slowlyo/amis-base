@@ -205,7 +205,7 @@ func seedPages(force ...bool) {
 // 填充权限
 func seedPermissions() {
 	// todo
-	db.Exec("truncate table admin_permissions")
+	//db.Exec("truncate table admin_permissions")
 
 	if !isNull(models.AdminPermission{}) {
 		return

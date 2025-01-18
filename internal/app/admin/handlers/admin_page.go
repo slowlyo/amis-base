@@ -4,9 +4,9 @@ import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/services"
 	base "amis-base/internal/models"
+	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
 	"encoding/json"
-	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/validator"
 	"github.com/gofiber/fiber/v2"
 	"strings"
@@ -116,17 +116,14 @@ func (p *AdminPage) QuickSave(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "JSON 格式有误")
 	}
 
-	var formatValue any
-	err := json.Unmarshal([]byte(params.Schema), &formatValue)
-	if err != nil {
-		return response.Error(ctx, "参数错误: "+err.Error())
+	formatValue := helper.JsonDecode[any](params.Schema)
+	if formatValue == nil {
+		return response.Error(ctx, "JSON 格式有误")
 	}
-
-	schema, _ := convertor.ToJson(formatValue)
 
 	page := models.AdminPage{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
-		Schema:    json.RawMessage(schema),
+		Schema:    json.RawMessage(helper.JsonEncode(formatValue)),
 	}
 
 	if err := p.Service.QuickSave(page); err != nil {

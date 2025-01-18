@@ -1,6 +1,8 @@
 package helper
 
 import (
+	"encoding/json"
+	"github.com/gofiber/fiber/v2/log"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"path/filepath"
@@ -65,4 +67,24 @@ func IsAllowRequest(rule, method, originalURL string) bool {
 	}
 
 	return false
+}
+
+// JsonEncode 将任意数据编码为 JSON 字符串
+func JsonEncode(data any) string {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		log.Errorf("Error encoding data to JSON: %v\n", err)
+		return ""
+	}
+	return string(jsonData)
+}
+
+// JsonDecode 将 JSON 字符串解码为指定类型。如果解析失败，返回零值。
+func JsonDecode[T any](data string) T {
+	var result T
+	err := json.Unmarshal([]byte(data), &result)
+	if err != nil {
+		log.Errorf("Error decoding JSON data: %v\n", err)
+	}
+	return result
 }

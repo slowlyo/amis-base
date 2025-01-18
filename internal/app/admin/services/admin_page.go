@@ -3,7 +3,6 @@ package services
 import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/pkg/db"
-	"encoding/json"
 	"errors"
 	"github.com/gofiber/fiber/v2"
 )
@@ -86,16 +85,16 @@ func (p *AdminPage) Delete(ids []string) error {
 }
 
 // GetSchemaBySign 根据页面标识获取页面结构
-func (p *AdminPage) GetSchemaBySign(sign string) json.RawMessage {
+func (p *AdminPage) GetSchemaBySign(sign string) string {
 	var page models.AdminPage
 
 	result := db.Query().Where("sign = ?", sign).First(&page)
 
 	if result.RowsAffected == 0 {
-		return nil
+		return ""
 	}
 
-	return page.Schema
+	return string(page.Schema)
 }
 
 // QuickSave 快速保存

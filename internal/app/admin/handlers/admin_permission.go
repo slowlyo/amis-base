@@ -4,8 +4,8 @@ import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/services"
 	base "amis-base/internal/models"
+	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
-	"encoding/json"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gofiber/fiber/v2"
@@ -54,14 +54,12 @@ func (p *AdminPermission) Save(ctx *fiber.Ctx) error {
 		return item["value"].(string)
 	})
 
-	apiJson, _ := json.Marshal(apis)
-
 	permission := models.AdminPermission{
 		BaseModel: base.BaseModel{ID: uint(params.ID)},
 		ParentId:  uint(params.ParentId),
 		Name:      params.Name,
 		Sign:      params.Sign,
-		Api:       string(apiJson),
+		Api:       helper.JsonEncode(apis),
 		Sort:      params.Sort,
 	}
 
@@ -88,17 +86,7 @@ func (p *AdminPermission) Detail(ctx *fiber.Ctx) error {
 		"sort":      permission.Sort,
 		"menu_ids":  strings.Join(menuIds, ","),
 		"api": func() []fiber.Map {
-			if permission.Api == "" {
-				return []fiber.Map{}
-			}
-
-			apis := make([]string, 0)
-			err := json.Unmarshal([]byte(permission.Api), &apis)
-			if err != nil {
-				return []fiber.Map{}
-			}
-
-			return slice.Map(apis, func(_ int, item string) fiber.Map {
+			return slice.Map(helper.JsonDecode[[]string](permission.Api), func(_ int, item string) fiber.Map {
 				return fiber.Map{"value": item}
 			})
 		}(),

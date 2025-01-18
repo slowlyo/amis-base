@@ -66,5 +66,7 @@ admin:
     exclude:
       - "get:/user"
       - "get:/menus"
+      - "post:/login"
+      - "get:/logout"
       - "get:/settings"
       - "get:/page_schema"

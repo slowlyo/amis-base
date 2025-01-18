@@ -3,7 +3,7 @@ package models
 import (
 	"amis-base/internal/app/admin/types"
 	base "amis-base/internal/models"
-	"encoding/json"
+	"amis-base/internal/pkg/helper"
 	"github.com/duke-git/lancet/v2/slice"
 )
 
@@ -42,10 +42,7 @@ func (u *AdminUser) PermissionApiRules() []string {
 	result := make([]string, 0)
 	permissions := u.Permissions()
 	for _, permission := range permissions {
-		var apis []string
-		if err := json.Unmarshal([]byte(permission.Api), &apis); err == nil {
-			result = append(result, apis...)
-		}
+		result = append(result, helper.JsonDecode[[]string](permission.Api)...)
 	}
 
 	return result

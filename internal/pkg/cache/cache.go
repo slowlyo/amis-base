@@ -2,6 +2,7 @@ package cache
 
 import (
 	"amis-base/internal/pkg/cache/drivers"
+	"amis-base/internal/pkg/helper"
 	"bytes"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
@@ -57,12 +58,7 @@ func GetObject[T any](key string) T {
 		return value
 	}
 
-	err = json.Unmarshal(bytesValue, &value)
-	if err != nil {
-		return value
-	}
-
-	return value
+	return helper.JsonDecode[T](string(bytesValue))
 }
 
 // Set 设置缓存数据
@@ -107,10 +103,7 @@ func Remember[T any](key string, exp time.Duration, callback func() (T, error)) 
 	bytesValue, err := Get(key)
 	if err == nil && len(bytesValue) > 0 {
 		// 如果缓存中有数据，反序列化并返回
-		err = json.Unmarshal(bytesValue, &value)
-		if err == nil {
-			return value, nil
-		}
+		return helper.JsonDecode[T](string(bytesValue)), nil
 	}
 
 	// 如果缓存中没有数据，执行回调函数获取数据
