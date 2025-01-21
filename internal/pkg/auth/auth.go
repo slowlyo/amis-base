@@ -101,6 +101,10 @@ func QueryToken(tableName, token string) *models.Token {
 }
 
 // RemoveToken 删除 token
-func RemoveToken(token string) {
+func RemoveToken(tableName, token string) {
+	cacheKey := fmt.Sprintf("tokens:%s:%s", tableName, cryptor.Sha256(token))
+
+	_ = cache.Delete(cacheKey)
+
 	db.Query().Where("token = ?", cryptor.Sha256(token)).Delete(&models.Token{})
 }

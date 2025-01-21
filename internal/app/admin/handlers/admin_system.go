@@ -75,6 +75,47 @@ func (s *AdminSystem) User(ctx *fiber.Ctx) error {
 	})
 }
 
+// SaveUserInfo 保存用户信息
+func (s *AdminSystem) SaveUserInfo(ctx *fiber.Ctx) error {
+	var params struct {
+		Avatar      string `json:"avatar"`
+		Name        string `json:"Name"`
+		Password    string `json:"password"`
+		OldPassword string `json:"old_password"`
+	}
+
+	if err := ctx.BodyParser(&params); err != nil {
+		return response.Error(ctx, "参数错误")
+	}
+
+	user := ctx.Locals("user").(models.AdminUser)
+
+	user.Avatar = params.Avatar
+	user.Name = params.Name
+
+	changePwd := false
+	if params.Password != "" {
+		if !auth.CheckHash(params.OldPassword, user.Password) {
+			return response.Error(ctx, "旧密码错误")
+		}
+
+		user.Password = auth.Hash(params.Password)
+
+		changePwd = true
+	}
+
+	if err := s.AuthService.SaveUser(user); err != nil {
+		return response.Error(ctx, err.Error())
+	}
+
+	// 更改了密码, 清除 token, 退出登录
+	if changePwd {
+		auth.RemoveToken("admin_users", ctx.Locals("token").(string))
+	}
+
+	return response.Ok(ctx, "保存成功")
+}
+
 // Login 登录
 func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 	var params struct {
@@ -103,7 +144,7 @@ func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 
 // Logout 退出登录
 func (s *AdminSystem) Logout(ctx *fiber.Ctx) error {
-	auth.RemoveToken(ctx.Locals("token").(string))
+	auth.RemoveToken("admin_users", ctx.Locals("token").(string))
 
 	return response.Success(ctx, nil)
 }

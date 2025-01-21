@@ -20,3 +20,8 @@ func (a *Auth) GetUserById(id uint) (models.AdminUser, error) {
 
 	return user, db.Query().Preload("Roles.Permissions").Where("enabled = ?", 1).First(&user, id).Error
 }
+
+// SaveUser 保存用户
+func (a *Auth) SaveUser(user models.AdminUser) error {
+	return db.Query().Save(&user).Error
+}

@@ -50,5 +50,8 @@ func Auth(ctx *fiber.Ctx) error {
 	ctx.Locals("user", user)
 	ctx.Locals("token", token)
 
+	// 清除过期 token
+	go auth.CleanExpiredToken()
+
 	return ctx.Next()
 }
