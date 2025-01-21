@@ -1,17 +1,27 @@
 # Amis Base
 
-### Run 
+使用 GoFiber 和 amis 构建你的数据面板~
 
-#### Docker
+### 运行
+
+首先, 你需要复制一个配置文件到 `config/config.yaml`, 并配置数据库信息
+
 ```shell
-# copy config
 cp config/config.example.yaml config/config.yaml
+```
 
-# use docker-compose
+#### 使用 Docker Compose
+
+```shell
 docker-compose up
+```
 
-# use docker
+#### 使用 Docker
+
+```shell
+# 构建
 docker build -t amis-base .
+# 运行
 docker run -d \
     --name amis-base \
     -p 8080:8080 \
@@ -20,18 +30,16 @@ docker run -d \
     amis-base
 ```
 
-#### Manual
+#### 手动运行
 
 ```shell
 # install
+go mod download
 go mod tidy
 
-# vendor (optional)
+# vendor (可选)
 # go mod vendor
 
-# copy config
-cp config/config.example.yaml config/config.yaml
-
-# run
+# 运行
 go run cmd/amis-base/main.go server
 ```
