@@ -70,3 +70,4 @@ admin:
       - "get:/logout"
       - "get:/settings"
       - "get:/page_schema"
+      - "get:/permissions"

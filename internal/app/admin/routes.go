@@ -17,15 +17,16 @@ func BootRoutes(app *fiber.App) {
 
 	// 系统相关
 	systemHandler := handlers.AdminSystem{}
-	adminRoute.Get("/user", systemHandler.User)              // 获取用户信息
-	adminRoute.Post("/user", systemHandler.SaveUserInfo)     // 保存用户信息
-	adminRoute.Get("/menus", systemHandler.Menus)            // 获取菜单
-	adminRoute.Post("/login", systemHandler.Login)           // 登录
-	adminRoute.Get("/logout", systemHandler.Logout)          // 退出登录
-	adminRoute.Post("/upload", systemHandler.Upload)         // 文件上传
-	adminRoute.Get("/settings", systemHandler.Settings)      // 获取系统配置
-	adminRoute.Get("/page_schema", systemHandler.PageSchema) // 获取页面结构
-	adminRoute.Post("/settings", systemHandler.SaveSettings) // 保存配置
+	adminRoute.Get("/user", systemHandler.User)               // 获取用户信息
+	adminRoute.Post("/user", systemHandler.SaveUserInfo)      // 保存用户信息
+	adminRoute.Get("/menus", systemHandler.Menus)             // 获取菜单
+	adminRoute.Post("/login", systemHandler.Login)            // 登录
+	adminRoute.Get("/logout", systemHandler.Logout)           // 退出登录
+	adminRoute.Post("/upload", systemHandler.Upload)          // 文件上传
+	adminRoute.Get("/settings", systemHandler.Settings)       // 获取系统配置
+	adminRoute.Get("/page_schema", systemHandler.PageSchema)  // 获取页面结构
+	adminRoute.Get("/permissions", systemHandler.Permissions) // 获取权限
+	adminRoute.Post("/settings", systemHandler.SaveSettings)  // 保存配置
 
 	// 系统内置功能
 	bootSystemRoutes(adminRoute)

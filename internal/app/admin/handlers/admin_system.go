@@ -198,3 +198,19 @@ func (s *AdminSystem) PageSchema(ctx *fiber.Ctx) error {
 
 	return response.Success(ctx, helper.JsonDecode[any](schemaStr))
 }
+
+// Permissions 获取权限
+func (s *AdminSystem) Permissions(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(models.AdminUser)
+	all := user.Permissions()
+
+	permissions := make(map[string]int)
+	for _, item := range all {
+		permissions[item.Sign] = 1
+	}
+
+	return response.Success(ctx, fiber.Map{
+		"isSuperAdmin": user.IsSuperAdmin(),
+		"_permissions": permissions,
+	})
+}
