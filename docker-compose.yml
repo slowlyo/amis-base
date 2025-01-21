@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  amis-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: amis-base
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./assets:/app/assets
+      - ./config/config.yaml:/app/config.yaml
