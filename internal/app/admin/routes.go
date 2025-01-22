@@ -28,6 +28,13 @@ func BootRoutes(app *fiber.App) {
 	adminRoute.Get("/permissions", systemHandler.Permissions) // 获取权限
 	adminRoute.Post("/settings", systemHandler.SaveSettings)  // 保存配置
 
+	// amis 登录页面
+	adminRoute.Get("/login", func(ctx *fiber.Ctx) error {
+		ctx.Request().URI().QueryArgs().Add("sign", "login")
+
+		return ctx.Next()
+	}, systemHandler.PageSchema)
+
 	// 系统内置功能
 	bootSystemRoutes(adminRoute)
 }
