@@ -4,6 +4,7 @@ import (
 	"amis-base/internal/app/admin/models"
 	"amis-base/internal/app/admin/services"
 	"amis-base/internal/pkg/auth"
+	"amis-base/internal/pkg/cache"
 	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
 	"encoding/json"
@@ -11,7 +12,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
+	"strconv"
 	"strings"
+	"time"
 )
 
 // AdminSystem 系统基本内容
@@ -127,15 +130,28 @@ func (s *AdminSystem) Login(ctx *fiber.Ctx) error {
 		return response.Error(ctx, "参数错误")
 	}
 
+	// 检查是否已经超过错误次数限制
+	errorCountKey := "login_error_count_" + params.Username
+	errorCount, _ := strconv.Atoi(cache.GetString(errorCountKey))
+	if errorCount >= 10 {
+		return response.Error(ctx, "账户已锁定, 请稍后再试")
+	}
+
 	user, err := s.AuthService.GetUserByUsername(params.Username)
 
 	if err != nil || user.ID == 0 || !auth.CheckHash(params.Password, user.Password) {
+		// 增加错误次数
+		err = cache.SetString(errorCountKey, strconv.Itoa(errorCount+1), time.Hour*3) // 设置过期时间为3小时
+
 		return response.Error(ctx, "用户名或密码错误")
 	}
 
 	if user.Enabled == 0 {
 		return response.Error(ctx, "用户已被禁用")
 	}
+
+	// 登录成功，清除错误计数
+	_ = cache.Delete(errorCountKey)
 
 	return response.Success(ctx, fiber.Map{
 		"token": auth.GenerateToken("admin_users", user.ID),
