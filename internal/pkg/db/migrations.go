@@ -22,5 +22,5 @@ func Migration() {
 	}
 
 	// 填充数据
-	go Seed()
+	Seed()
 }

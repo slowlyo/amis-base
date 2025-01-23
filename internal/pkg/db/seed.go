@@ -11,24 +11,22 @@ import (
 // Seed 填充初始数据
 func Seed() {
 	// 设置
-	go seedSettings()
+	seedSettings()
 
 	// 页面
-	go seedPages()
+	seedPages()
 
 	// 用户
-	go seedUsers()
+	seedUsers()
 
-	go func() {
-		// 菜单
-		seedMenus()
+	// 菜单
+	seedMenus()
 
-		// 权限
-		seedPermissions()
+	// 权限
+	seedPermissions()
 
-		// 角色
-		seedRoles()
-	}()
+	// 角色
+	seedRoles()
 }
 
 // 判断数据表是否为空
