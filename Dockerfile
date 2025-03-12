@@ -15,6 +15,7 @@ COPY . .
 # 下载依赖并编译
 RUN go mod download && \
     go mod tidy && \
+    go mod vendor && \
     go build -v -o amis-base cmd/amis-base/main.go
 
 # 运行
