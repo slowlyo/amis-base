@@ -1,6 +1,8 @@
-# Amis Base
+# Amis Base (Alpha)
 
 使用 GoFiber 和 amis 构建你的数据面板~
+
+> ⚠️ 当前处于测试阶段, 请勿用于生产~
 
 ### 运行
 
