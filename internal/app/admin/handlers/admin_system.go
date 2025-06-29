@@ -7,14 +7,16 @@ import (
 	"amis-base/internal/pkg/cache"
 	"amis-base/internal/pkg/helper"
 	"amis-base/internal/pkg/response"
+	"amis-base/internal/schema"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
-	"github.com/spf13/viper"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"github.com/spf13/viper"
 )
 
 // AdminSystem 系统基本内容
@@ -206,8 +208,14 @@ func (s *AdminSystem) Upload(ctx *fiber.Ctx) error {
 // PageSchema 获取页面结构
 func (s *AdminSystem) PageSchema(ctx *fiber.Ctx) error {
 	pageSign := ctx.Query("sign")
-	schemaStr := s.PageService.GetSchemaBySign(pageSign)
 
+	// 优先检查程序内定义的schema
+	if schemaStr := schema.GetSchemaBySign(pageSign); schemaStr != "" {
+		return response.Success(ctx, helper.JsonDecode[any](schemaStr))
+	}
+
+	// 回退到数据库查找
+	schemaStr := s.PageService.GetSchemaBySign(pageSign)
 	if schemaStr == "" {
 		return response.Error(ctx, "页面不存在")
 	}

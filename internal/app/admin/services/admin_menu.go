@@ -5,8 +5,10 @@ import (
 	"amis-base/internal/app/admin/types"
 	base "amis-base/internal/models"
 	"amis-base/internal/pkg/db"
+	"amis-base/internal/schema"
 	"errors"
 	"fmt"
+
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/cryptor"
 	"github.com/duke-git/lancet/v2/slice"
@@ -242,15 +244,37 @@ func (m *AdminMenu) GetParentOptions() []models.AdminMenu {
 
 // GetPageOptions 获取页面选项
 func (m *AdminMenu) GetPageOptions() []fiber.Map {
-	var pages []models.AdminPage
+	var result []fiber.Map
 
+	// 首先添加程序内定义的schema选项
+	embeddedSchemas := schema.GetAllSchemas()
+	for _, schemaInfo := range embeddedSchemas {
+		result = append(result, fiber.Map{
+			"label": schemaInfo.Name,
+			"value": schemaInfo.Sign,
+		})
+	}
+
+	// 然后添加数据库中的页面选项
+	var pages []models.AdminPage
 	db.Query().Model(models.AdminPage{}).Find(&pages)
 
-	result := make([]fiber.Map, len(pages))
-	for i, page := range pages {
-		result[i] = fiber.Map{
-			"label": page.Name,
-			"value": page.Sign,
+	for _, page := range pages {
+		// 检查是否与程序内定义的schema重复
+		isDuplicate := false
+		for _, schemaInfo := range embeddedSchemas {
+			if schemaInfo.Sign == page.Sign {
+				isDuplicate = true
+				break
+			}
+		}
+
+		// 如果不重复，则添加到结果中
+		if !isDuplicate {
+			result = append(result, fiber.Map{
+				"label": page.Name,
+				"value": page.Sign,
+			})
 		}
 	}
 

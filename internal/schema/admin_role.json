@@ -1,0 +1,466 @@
+{
+    "body": [
+        {
+            "alwaysShowPagination": true,
+            "api": { "method": "get", "url": "/system/roles" },
+            "bulkActions": [
+                {
+                    "actionType": "ajax",
+                    "api": "",
+                    "confirmText": "确定要删除？",
+                    "editorSetting": { "behavior": "bulkDelete" },
+                    "icon": "fa fa-trash-o",
+                    "id": "u:394fe8eeb9b7",
+                    "label": "删除",
+                    "level": "danger",
+                    "onEvent": {
+                        "click": {
+                            "actions": [
+                                {
+                                    "actionType": "ajax",
+                                    "api": {
+                                        "adaptor": "",
+                                        "data": { "ids": "${ids}" },
+                                        "messages": {},
+                                        "method": "post",
+                                        "requestAdaptor": "",
+                                        "url": "/system/roles/delete"
+                                    },
+                                    "ignoreError": false,
+                                    "options": {},
+                                    "outputVar": "responseResult"
+                                },
+                                {
+                                    "actionType": "reload",
+                                    "componentId": "u:563375ef114c",
+                                    "groupType": "component"
+                                }
+                            ],
+                            "weight": 0
+                        }
+                    },
+                    "type": "button",
+                    "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_role.bulk_delete\"]}"
+                }
+            ],
+            "columns": [
+                {
+                    "id": "u:154e022f601d",
+                    "label": "ID",
+                    "name": "id",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "text"
+                },
+                {
+                    "id": "u:7172c1ba66c8",
+                    "label": "名称",
+                    "name": "name",
+                    "placeholder": "-",
+                    "type": "text"
+                },
+                {
+                    "id": "u:acc2fc18bb5d",
+                    "label": "标识",
+                    "name": "sign",
+                    "type": "text"
+                },
+                {
+                    "format": "YYYY-MM-DD HH:mm:ss",
+                    "id": "u:05ee8b110a15",
+                    "label": "创建时间",
+                    "name": "created_at",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "date"
+                },
+                {
+                    "format": "YYYY-MM-DD HH:mm:ss",
+                    "id": "u:a17c366510d7",
+                    "label": "更新时间",
+                    "name": "updated_at",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "date"
+                },
+                {
+                    "buttons": [
+                        {
+                            "actionType": "drawer",
+                            "drawer": {
+                                "body": [
+                                    {
+                                        "api": "/system/roles/permissions",
+                                        "body": [
+                                            {
+                                                "cascade": true,
+                                                "className": "h-full b-none",
+                                                "extractValue": true,
+                                                "heightAuto": true,
+                                                "inputClassName": "h-full tree-full",
+                                                "joinValues": false,
+                                                "label": "",
+                                                "labelField": "name",
+                                                "multiple": true,
+                                                "name": "permissions",
+                                                "searchable": true,
+                                                "size": "full",
+                                                "source": "/system/permissions/parent_options?append_none_option=false",
+                                                "type": "input-tree",
+                                                "valueField": "id"
+                                            }
+                                        ],
+                                        "data": { "id": "${id}" },
+                                        "initApi": "/system/roles/permissions?id=${id}",
+                                        "mode": "normal",
+                                        "type": "form"
+                                    }
+                                ],
+                                "closeOnEsc": true,
+                                "closeOnOutside": true,
+                                "resizable": true,
+                                "title": "设置权限",
+                                "type": "drawer"
+                            },
+                            "id": "u:943e80e0bab7",
+                            "label": "设置权限",
+                            "level": "link",
+                            "type": "button",
+                            "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_role.edit_permission\"]}"
+                        },
+                        {
+                            "actionType": "dialog",
+                            "dialog": {
+                                "actionType": "dialog",
+                                "actions": [
+                                    {
+                                        "actionType": "cancel",
+                                        "id": "u:75c91a63edad",
+                                        "label": "取消",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "actionType": "confirm",
+                                        "id": "u:f8f7f1c670ea",
+                                        "label": "确定",
+                                        "primary": true,
+                                        "type": "button"
+                                    }
+                                ],
+                                "body": [
+                                    {
+                                        "actions": [
+                                            {
+                                                "label": "提交",
+                                                "primary": true,
+                                                "type": "submit"
+                                            }
+                                        ],
+                                        "api": {
+                                            "adaptor": "",
+                                            "messages": {},
+                                            "method": "post",
+                                            "requestAdaptor": "",
+                                            "url": "/system/roles"
+                                        },
+                                        "autoFocus": true,
+                                        "body": [
+                                            {
+                                                "id": "u:1bc881485c42",
+                                                "label": "ID",
+                                                "name": "id",
+                                                "type": "input-text",
+                                                "visible": false
+                                            },
+                                            {
+                                                "clearable": true,
+                                                "id": "u:be7498337250",
+                                                "label": "名称",
+                                                "name": "name",
+                                                "required": true,
+                                                "type": "input-text",
+                                                "validations": {
+                                                    "maxLength": 255
+                                                }
+                                            },
+                                            {
+                                                "clearable": true,
+                                                "id": "u:18e8745dd901",
+                                                "label": "标识",
+                                                "name": "sign",
+                                                "required": true,
+                                                "type": "input-text",
+                                                "validations": {
+                                                    "maxLength": 255
+                                                }
+                                            }
+                                        ],
+                                        "dsType": "api",
+                                        "feat": "Edit",
+                                        "id": "u:a7cba0632cbb",
+                                        "initApi": {
+                                            "adaptor": "",
+                                            "data": { "id": "${id}" },
+                                            "messages": {},
+                                            "method": "get",
+                                            "requestAdaptor": "",
+                                            "url": "/system/roles/detail"
+                                        },
+                                        "labelAlign": "left",
+                                        "mode": "normal",
+                                        "type": "form"
+                                    }
+                                ],
+                                "closeOnEsc": false,
+                                "closeOnOutside": false,
+                                "draggable": false,
+                                "id": "u:b7639c73fc66",
+                                "showCloseButton": true,
+                                "showErrorMsg": true,
+                                "showLoading": true,
+                                "title": "编辑",
+                                "type": "dialog"
+                            },
+                            "editorSetting": { "behavior": "update" },
+                            "id": "u:29435e16d2df",
+                            "label": "编辑",
+                            "level": "link",
+                            "type": "button",
+                            "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_role.update\"]}"
+                        },
+                        {
+                            "actionType": "",
+                            "api": { "method": "post", "url": "/system/roles" },
+                            "className": "text-danger",
+                            "confirmText": "确定要删除？",
+                            "editorSetting": { "behavior": "delete" },
+                            "id": "u:cee85dad465d",
+                            "label": "删除",
+                            "level": "link",
+                            "onEvent": {
+                                "click": {
+                                    "actions": [
+                                        {
+                                            "actionType": "ajax",
+                                            "api": {
+                                                "adaptor": "",
+                                                "data": {
+                                                    "ids": "${TRIM(id)}"
+                                                },
+                                                "messages": {},
+                                                "method": "post",
+                                                "requestAdaptor": "",
+                                                "url": "/system/roles/delete"
+                                            },
+                                            "ignoreError": false,
+                                            "options": {},
+                                            "outputVar": "responseResult"
+                                        },
+                                        {
+                                            "actionType": "reload",
+                                            "componentId": "u:563375ef114c",
+                                            "groupType": "component"
+                                        }
+                                    ],
+                                    "weight": 0
+                                }
+                            },
+                            "type": "button",
+                            "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_role.delete\"]}"
+                        }
+                    ],
+                    "id": "u:01259e435906",
+                    "label": "操作",
+                    "type": "operation"
+                }
+            ],
+            "filter": {
+                "actions": [
+                    {
+                        "actionType": "clear-and-submit",
+                        "id": "u:cdb68b8d4b45",
+                        "label": "重置",
+                        "type": "button"
+                    },
+                    {
+                        "id": "u:253f267c0d95",
+                        "label": "搜索",
+                        "level": "primary",
+                        "type": "submit"
+                    }
+                ],
+                "body": [
+                    {
+                        "clearable": true,
+                        "id": "u:7fed8045c4d1",
+                        "label": "名称",
+                        "name": "name",
+                        "size": "md",
+                        "type": "input-text"
+                    },
+                    {
+                        "clearable": true,
+                        "id": "u:7fed8045c4d1",
+                        "label": "标识",
+                        "name": "sign",
+                        "size": "md",
+                        "type": "input-text"
+                    }
+                ],
+                "feat": "Insert",
+                "id": "u:ba2b6c5f28ea",
+                "panelClassName": "base-filter",
+                "title": "",
+                "type": "form"
+            },
+            "filterDefaultVisible": false,
+            "filterTogglable": true,
+            "footerToolbar": [
+                { "type": "statistics" },
+                { "type": "pagination" },
+                {
+                    "body": [
+                        {
+                            "id": "u:8378ce2f122e",
+                            "multiple": false,
+                            "name": "perPage",
+                            "onEvent": {
+                                "change": {
+                                    "actions": [
+                                        {
+                                            "actionType": "reload",
+                                            "componentId": "admin-api.system.admin_users.crud",
+                                            "data": {
+                                                "perPage": "${event.data.value}"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "options": [
+                                { "label": "20 条/页", "value": 20 },
+                                { "label": "30 条/页", "value": 30 },
+                                { "label": "50 条/页", "value": 50 },
+                                { "label": "100 条/页", "value": 100 },
+                                { "label": "200 条/页", "value": 200 }
+                            ],
+                            "overlayPlacement": "top",
+                            "selectFirst": true,
+                            "type": "select"
+                        }
+                    ],
+                    "feat": "Insert",
+                    "id": "u:abf9235be81a",
+                    "target": "window",
+                    "type": "form",
+                    "wrapWithPanel": false
+                }
+            ],
+            "headerToolbar": [
+                {
+                    "actionType": "dialog",
+                    "dialog": {
+                        "actionType": "dialog",
+                        "actions": [
+                            {
+                                "actionType": "cancel",
+                                "id": "u:643352191512",
+                                "label": "取消",
+                                "type": "button"
+                            },
+                            {
+                                "actionType": "confirm",
+                                "id": "u:ecfcc2bf52ae",
+                                "label": "提交",
+                                "primary": true,
+                                "type": "button"
+                            }
+                        ],
+                        "body": [
+                            {
+                                "actions": [
+                                    {
+                                        "label": "提交",
+                                        "primary": true,
+                                        "type": "submit"
+                                    }
+                                ],
+                                "api": {
+                                    "method": "post",
+                                    "url": "/system/roles"
+                                },
+                                "autoFocus": true,
+                                "body": [
+                                    {
+                                        "clearable": true,
+                                        "id": "u:210c457f5e68",
+                                        "label": "名称",
+                                        "name": "name",
+                                        "required": true,
+                                        "type": "input-text",
+                                        "validations": { "maxLength": 255 }
+                                    },
+                                    {
+                                        "clearable": true,
+                                        "id": "u:9db61bb91791",
+                                        "label": "标识",
+                                        "name": "sign",
+                                        "required": true,
+                                        "type": "input-text",
+                                        "validations": { "maxLength": 255 }
+                                    }
+                                ],
+                                "canAccessSuperData": false,
+                                "dsType": "api",
+                                "feat": "Insert",
+                                "id": "u:b49730d65248",
+                                "labelAlign": "left",
+                                "mode": "normal",
+                                "type": "form"
+                            }
+                        ],
+                        "closeOnEsc": true,
+                        "closeOnOutside": true,
+                        "draggable": true,
+                        "id": "u:861566ef1498",
+                        "showCloseButton": true,
+                        "showErrorMsg": true,
+                        "showLoading": true,
+                        "title": "新增",
+                        "type": "dialog"
+                    },
+                    "editorSetting": { "behavior": "create" },
+                    "icon": "fa fa-plus",
+                    "id": "u:2f6d4463cb00",
+                    "label": "新增",
+                    "level": "primary",
+                    "type": "button",
+                    "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_role.create\"]}"
+                },
+                { "type": "bulk-actions" },
+                { "align": "right", "id": "u:df448b218def", "type": "reload" },
+                {
+                    "align": "right",
+                    "id": "u:6046fb0268f2",
+                    "tpl": "内容",
+                    "type": "filter-toggler",
+                    "wrapperComponent": ""
+                }
+            ],
+            "id": "u:563375ef114c",
+            "itemActions": [],
+            "messages": {},
+            "perPage": 20,
+            "perPageAvailable": [5, 10, 20, 50, 100],
+            "syncLocation": false,
+            "type": "crud"
+        }
+    ],
+    "data": { "showFilter": false },
+    "definitions": {},
+    "id": "u:a8979bbc7044",
+    "initApi": { "method": "get", "url": "/permissions" },
+    "pullRefresh": { "disabled": true },
+    "regions": ["body"],
+    "type": "page"
+}

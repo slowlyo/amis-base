@@ -1,0 +1,126 @@
+{
+    "body": [
+        {
+            "affixFooter": false,
+            "animations": {
+                "enter": { "delay": 0, "duration": 0.5, "type": "zoomIn" }
+            },
+            "body": [
+                {
+                    "api": "/settings",
+                    "body": [
+                        {
+                            "className": "px-2.5 pb-2.5",
+                            "id": "u:390d0c9f5cbc",
+                            "items": [
+                                {
+                                    "height": 40,
+                                    "id": "u:13d2aac1120d",
+                                    "src": "${logo}",
+                                    "type": "image",
+                                    "visibleOn": "${logo}",
+                                    "width": 40
+                                },
+                                {
+                                    "className": "font-medium",
+                                    "id": "u:671dc96fc819",
+                                    "tpl": "<div style=\"font-size: 24px\">${appName}</div>",
+                                    "type": "tpl"
+                                }
+                            ],
+                            "justify": "space-between",
+                            "type": "flex"
+                        },
+                        {
+                            "actions": [],
+                            "api": "/login",
+                            "body": [
+                                {
+                                    "id": "u:181957355630",
+                                    "name": "username",
+                                    "placeholder": "用户名",
+                                    "required": true,
+                                    "type": "input-text"
+                                },
+                                {
+                                    "id": "u:b4794929dc44",
+                                    "name": "password",
+                                    "placeholder": "密码",
+                                    "required": true,
+                                    "type": "input-password"
+                                },
+                                {
+                                    "id": "u:7f8a6b05d9e0",
+                                    "name": "remember_me",
+                                    "option": "记住我",
+                                    "type": "checkbox",
+                                    "value": true
+                                },
+                                {
+                                    "actionType": "submit",
+                                    "className": "w-full",
+                                    "id": "u:207b2cb31788",
+                                    "label": "登 录",
+                                    "level": "primary",
+                                    "type": "button"
+                                }
+                            ],
+                            "feat": "Insert",
+                            "id": "login-form",
+                            "onEvent": {
+                                "inited": {
+                                    "actions": [
+                                        {
+                                            "actionType": "custom",
+                                            "script": "let loginParams = localStorage.getItem(window.$owl.getCacheKey('loginParams'))\r\nif(loginParams){\r\n    loginParams = JSON.parse(decodeURIComponent(window.atob(loginParams)))\r\n    doAction({\r\n        actionType: 'setValue',\r\n        componentId: 'login-form',\r\n        args: { value: loginParams }\r\n    })\r\n}"
+                                        }
+                                    ]
+                                },
+                                "submitFail": {
+                                    "actions": [
+                                        {
+                                            "actionType": "reload",
+                                            "componentId": "captcha-service"
+                                        }
+                                    ]
+                                },
+                                "submitSucc": {
+                                    "actions": [
+                                        {
+                                            "actionType": "custom",
+                                            "script": "let _data = {}\r\nif(event.data.remember_me){\r\n    _data = { username: event.data.username, password: event.data.password }\r\n}\r\nwindow.$owl.afterLoginSuccess(_data, event.data.result.data.token)"
+                                        }
+                                    ]
+                                }
+                            },
+                            "panelClassName": "border-none",
+                            "title": "",
+                            "type": "form"
+                        }
+                    ],
+                    "dsType": "api",
+                    "id": "u:621fbe7ed033",
+                    "type": "service"
+                }
+            ],
+            "className": "w-96 m:w-full pt-3",
+            "id": "u:8018d90f803b",
+            "type": "panel"
+        }
+    ],
+    "className": "h-screen w-full flex items-center justify-center bg-gray-50",
+    "id": "u:7cf561b82b74",
+    "isFixedHeight": false,
+    "isFixedWidth": false,
+    "type": "wrapper",
+    "style": {
+        "position": "static",
+        "display": "flex",
+        "fontFamily": "",
+        "backgroundSize": "cover",
+        "backgroundImage": "https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr",
+        "backgroundPosition": "50% 50%",
+        "flexWrap": "nowrap",
+        "fontSize": 12
+    }
+}

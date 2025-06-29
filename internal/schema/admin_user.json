@@ -1,0 +1,697 @@
+{
+    "body": [
+        {
+            "alwaysShowPagination": true,
+            "api": { "method": "get", "url": "/system/users" },
+            "bulkActions": [
+                {
+                    "actionType": "ajax",
+                    "api": "",
+                    "confirmText": "确定要删除？",
+                    "editorSetting": { "behavior": "bulkDelete" },
+                    "icon": "fa fa-trash-o",
+                    "id": "u:394fe8eeb9b7",
+                    "label": "删除",
+                    "level": "danger",
+                    "onEvent": {
+                        "click": {
+                            "actions": [
+                                {
+                                    "actionType": "ajax",
+                                    "api": {
+                                        "adaptor": "",
+                                        "data": { "ids": "${ids}" },
+                                        "messages": {},
+                                        "method": "post",
+                                        "requestAdaptor": "",
+                                        "url": "/system/users/delete"
+                                    },
+                                    "ignoreError": false,
+                                    "options": {},
+                                    "outputVar": "responseResult"
+                                },
+                                {
+                                    "actionType": "reload",
+                                    "componentId": "u:563375ef114c",
+                                    "groupType": "component"
+                                }
+                            ],
+                            "weight": 0
+                        }
+                    },
+                    "type": "button",
+                    "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_user.bulk_delete\"]}"
+                }
+            ],
+            "columns": [
+                {
+                    "id": "u:154e022f601d",
+                    "label": "ID",
+                    "name": "id",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "text"
+                },
+                {
+                    "id": "u:315b256293b8",
+                    "inline": false,
+                    "label": "头像",
+                    "name": "avatar",
+                    "placeholder": "-",
+                    "showtype": "image",
+                    "src": "${avatar}",
+                    "style": { "fontFamily": "", "fontSize": 12 },
+                    "type": "avatar"
+                },
+                {
+                    "id": "u:38093dfa5519",
+                    "label": "姓名",
+                    "name": "name",
+                    "placeholder": "-",
+                    "type": "tpl"
+                },
+                {
+                    "id": "u:204471470466",
+                    "label": "用户名",
+                    "name": "username",
+                    "placeholder": "-",
+                    "type": "tpl"
+                },
+                {
+                    "id": "u:924252b24efa",
+                    "isFixedHeight": false,
+                    "isFixedWidth": false,
+                    "items": {
+                        "className": "my-1",
+                        "id": "u:a9630e9ed74a",
+                        "label": "${name}",
+                        "type": "tag"
+                    },
+                    "label": "角色",
+                    "name": "roles",
+                    "placeholder": "-",
+                    "style": { "display": "block" },
+                    "type": "each"
+                },
+                {
+                    "id": "u:428d92bcd810",
+                    "label": "状态",
+                    "name": "enabled",
+                    "placeholder": "-",
+                    "quickEdit": {
+                        "body": [
+                            {
+                                "falseValue": 0,
+                                "id": "u:f4152133eb3b",
+                                "label": "",
+                                "name": "enabled",
+                                "offText": "禁用",
+                                "onText": "启用",
+                                "option": "",
+                                "trueValue": 1,
+                                "type": "switch",
+                                "disabledOn": "${!isSuperAdmin && _permissions[\"system.admin_user.update\"] != 1}"
+                            }
+                        ],
+                        "id": "u:347a3e35a648",
+                        "isFixedHeight": false,
+                        "isFixedWidth": false,
+                        "mode": "inline",
+                        "saveImmediately": true,
+                        "style": { "display": "block", "position": "static" },
+                        "type": "wrapper"
+                    },
+                    "type": "switch"
+                },
+                {
+                    "format": "YYYY-MM-DD HH:mm:ss",
+                    "id": "u:05ee8b110a15",
+                    "label": "创建时间",
+                    "name": "created_at",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "date"
+                },
+                {
+                    "format": "YYYY-MM-DD HH:mm:ss",
+                    "id": "u:a17c366510d7",
+                    "label": "更新时间",
+                    "name": "updated_at",
+                    "placeholder": "-",
+                    "sortable": true,
+                    "type": "date"
+                },
+                {
+                    "buttons": [
+                        {
+                            "actionType": "drawer",
+                            "drawer": {
+                                "actionType": "drawer",
+                                "actions": [
+                                    {
+                                        "actionType": "cancel",
+                                        "id": "u:efb060b9ff4a",
+                                        "label": "取消",
+                                        "type": "button"
+                                    },
+                                    {
+                                        "actionType": "submit",
+                                        "id": "u:3f28bcb7d137",
+                                        "label": "提交",
+                                        "level": "primary",
+                                        "type": "button"
+                                    }
+                                ],
+                                "body": [
+                                    {
+                                        "actions": [
+                                            {
+                                                "actionType": "cancel",
+                                                "label": "取消",
+                                                "type": "button"
+                                            },
+                                            {
+                                                "actionType": "submit",
+                                                "label": "提交",
+                                                "level": "primary",
+                                                "type": "button"
+                                            }
+                                        ],
+                                        "api": {
+                                            "adaptor": "",
+                                            "messages": {},
+                                            "method": "post",
+                                            "requestAdaptor": "",
+                                            "url": "/system/users"
+                                        },
+                                        "body": [
+                                            {
+                                                "colSize": "1",
+                                                "hidden": false,
+                                                "id": "u:f019150f0d5d",
+                                                "label": "ID",
+                                                "name": "id",
+                                                "row": 0,
+                                                "type": "input-text",
+                                                "visible": false
+                                            },
+                                            {
+                                                "accept": ".jpeg, .jpg, .png, .gif",
+                                                "autoUpload": true,
+                                                "bos": "default",
+                                                "colSize": "1",
+                                                "hideUploadButton": false,
+                                                "id": "u:6c121c169712",
+                                                "imageClassName": "r w-full",
+                                                "label": "头像",
+                                                "limit": false,
+                                                "multiple": false,
+                                                "name": "avatar",
+                                                "proxy": true,
+                                                "receiver": {
+                                                    "adaptor": "",
+                                                    "data": {
+                                                        "dir": "avatars"
+                                                    },
+                                                    "messages": {},
+                                                    "method": "post",
+                                                    "requestAdaptor": "",
+                                                    "url": "/upload"
+                                                },
+                                                "row": 1,
+                                                "type": "input-image",
+                                                "uploadType": "fileReceptor"
+                                            },
+                                            {
+                                                "clearable": true,
+                                                "colSize": "1",
+                                                "id": "u:879f7940aa10",
+                                                "label": "姓名",
+                                                "name": "name",
+                                                "required": true,
+                                                "row": 2,
+                                                "type": "input-text",
+                                                "validations": {
+                                                    "maxLength": 255
+                                                }
+                                            },
+                                            {
+                                                "clearable": true,
+                                                "colSize": "1",
+                                                "id": "u:268e0efe869c",
+                                                "label": "用户名",
+                                                "name": "username",
+                                                "required": true,
+                                                "row": 3,
+                                                "type": "input-text",
+                                                "validations": {
+                                                    "maxLength": 255
+                                                }
+                                            },
+                                            {
+                                                "clearable": true,
+                                                "colSize": "1",
+                                                "id": "u:63199903f7a6",
+                                                "label": "密码",
+                                                "name": "password",
+                                                "row": 4,
+                                                "showCounter": false,
+                                                "type": "input-password",
+                                                "validations": {
+                                                    "maxLength": 255
+                                                }
+                                            },
+                                            {
+                                                "id": "u:f429d1cc72a8",
+                                                "label": "确认密码",
+                                                "name": "confirm_password",
+                                                "row": 5,
+                                                "showCounter": false,
+                                                "type": "input-password",
+                                                "validationErrors": {
+                                                    "equalsField": "两次输入密码不一致"
+                                                },
+                                                "validations": {
+                                                    "equalsField": "password"
+                                                }
+                                            },
+                                            {
+                                                "checkAll": false,
+                                                "clearable": true,
+                                                "id": "u:4941684849f2",
+                                                "joinValues": true,
+                                                "label": "角色",
+                                                "multiple": true,
+                                                "name": "role_ids",
+                                                "row": 6,
+                                                "searchable": true,
+                                                "source": {
+                                                    "adaptor": "",
+                                                    "messages": {},
+                                                    "method": "get",
+                                                    "requestAdaptor": "",
+                                                    "url": "/system/users/role_options"
+                                                },
+                                                "type": "select"
+                                            },
+                                            {
+                                                "falseValue": 0,
+                                                "id": "u:63ea90c7355d",
+                                                "label": "状态",
+                                                "name": "enabled",
+                                                "offText": "禁用",
+                                                "onText": "启用",
+                                                "option": "",
+                                                "row": 7,
+                                                "trueValue": 1,
+                                                "type": "switch",
+                                                "value": 1
+                                            }
+                                        ],
+                                        "dsType": "api",
+                                        "feat": "Edit",
+                                        "id": "u:b808323b3b92",
+                                        "initApi": {
+                                            "adaptor": "",
+                                            "data": { "id": "${id}" },
+                                            "messages": {},
+                                            "method": "get",
+                                            "requestAdaptor": "",
+                                            "url": "/system/users/detail"
+                                        },
+                                        "labelAlign": "top",
+                                        "mode": "flex",
+                                        "onEvent": {
+                                            "submitSucc": {
+                                                "actions": [
+                                                    {
+                                                        "actionType": "search",
+                                                        "componentId": "u:ebed804f316f",
+                                                        "groupType": "component"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "resetAfterSubmit": true,
+                                        "title": "新增数据",
+                                        "type": "form"
+                                    }
+                                ],
+                                "closeOnEsc": true,
+                                "closeOnOutside": true,
+                                "draggable": true,
+                                "editorSetting": { "displayName": "" },
+                                "id": "u:eba8ada34731",
+                                "resizable": false,
+                                "showCloseButton": true,
+                                "showErrorMsg": true,
+                                "showLoading": true,
+                                "title": "编辑",
+                                "type": "drawer"
+                            },
+                            "editorSetting": { "behavior": "update" },
+                            "id": "u:29435e16d2df",
+                            "label": "编辑",
+                            "level": "link",
+                            "type": "button",
+                            "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_user.update\"]}"
+                        },
+                        {
+                            "actionType": "",
+                            "api": { "method": "post", "url": "/system/users" },
+                            "className": "text-danger",
+                            "confirmText": "确定要删除？",
+                            "editorSetting": { "behavior": "delete" },
+                            "id": "u:cee85dad465d",
+                            "label": "删除",
+                            "level": "link",
+                            "onEvent": {
+                                "click": {
+                                    "actions": [
+                                        {
+                                            "actionType": "ajax",
+                                            "api": {
+                                                "adaptor": "",
+                                                "data": {
+                                                    "ids": "${TRIM(id)}"
+                                                },
+                                                "messages": {},
+                                                "method": "post",
+                                                "requestAdaptor": "",
+                                                "url": "/system/users/delete"
+                                            },
+                                            "ignoreError": false,
+                                            "options": {},
+                                            "outputVar": "responseResult"
+                                        },
+                                        {
+                                            "actionType": "reload",
+                                            "componentId": "u:563375ef114c",
+                                            "groupType": "component"
+                                        }
+                                    ],
+                                    "weight": 0
+                                }
+                            },
+                            "type": "button",
+                            "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_user.delete\"]}"
+                        }
+                    ],
+                    "id": "u:01259e435906",
+                    "label": "操作",
+                    "placeholder": "-",
+                    "type": "operation"
+                }
+            ],
+            "filter": {
+                "actions": [
+                    {
+                        "actionType": "clear-and-submit",
+                        "id": "u:cdb68b8d4b45",
+                        "label": "重置",
+                        "type": "button"
+                    },
+                    {
+                        "id": "u:253f267c0d95",
+                        "label": "搜索",
+                        "level": "primary",
+                        "type": "submit"
+                    }
+                ],
+                "body": [
+                    {
+                        "clearable": true,
+                        "id": "u:7fed8045c4d1",
+                        "label": "名称",
+                        "name": "name",
+                        "size": "md",
+                        "type": "input-text"
+                    },
+                    {
+                        "clearable": true,
+                        "id": "u:7fed8045c4d1",
+                        "label": "用户名",
+                        "name": "username",
+                        "size": "md",
+                        "type": "input-text"
+                    }
+                ],
+                "feat": "Insert",
+                "id": "u:ba2b6c5f28ea",
+                "panelClassName": "base-filter",
+                "title": "",
+                "type": "form"
+            },
+            "filterDefaultVisible": false,
+            "filterTogglable": true,
+            "footerToolbar": [
+                { "type": "statistics" },
+                { "type": "pagination" },
+                {
+                    "body": [
+                        {
+                            "id": "u:8378ce2f122e",
+                            "multiple": false,
+                            "name": "perPage",
+                            "onEvent": {
+                                "change": {
+                                    "actions": [
+                                        {
+                                            "actionType": "reload",
+                                            "componentId": "admin-api.system.admin_users.crud",
+                                            "data": {
+                                                "perPage": "${event.data.value}"
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "options": [
+                                { "label": "20 条/页", "value": 20 },
+                                { "label": "30 条/页", "value": 30 },
+                                { "label": "50 条/页", "value": 50 },
+                                { "label": "100 条/页", "value": 100 },
+                                { "label": "200 条/页", "value": 200 }
+                            ],
+                            "overlayPlacement": "top",
+                            "selectFirst": true,
+                            "type": "select"
+                        }
+                    ],
+                    "feat": "Insert",
+                    "id": "u:abf9235be81a",
+                    "target": "window",
+                    "type": "form",
+                    "wrapWithPanel": false
+                }
+            ],
+            "headerToolbar": [
+                {
+                    "actionType": "drawer",
+                    "drawer": {
+                        "actionType": "drawer",
+                        "actions": [
+                            {
+                                "actionType": "cancel",
+                                "id": "u:8468ef2f62a5",
+                                "label": "取消",
+                                "type": "button"
+                            },
+                            {
+                                "actionType": "confirm",
+                                "id": "u:ae926ea9a3e9",
+                                "label": "提交",
+                                "primary": true,
+                                "type": "button"
+                            }
+                        ],
+                        "body": [
+                            {
+                                "actions": [
+                                    {
+                                        "label": "提交",
+                                        "primary": true,
+                                        "type": "submit"
+                                    }
+                                ],
+                                "api": {
+                                    "method": "post",
+                                    "url": "/system/users"
+                                },
+                                "autoFocus": true,
+                                "body": [
+                                    {
+                                        "colSize": "1",
+                                        "hidden": false,
+                                        "id": "u:7a74f685dc9b",
+                                        "label": "ID",
+                                        "name": "id",
+                                        "row": 0,
+                                        "type": "input-text",
+                                        "visible": false
+                                    },
+                                    {
+                                        "accept": ".jpeg, .jpg, .png, .gif",
+                                        "autoUpload": true,
+                                        "bos": "default",
+                                        "colSize": "1",
+                                        "hideUploadButton": false,
+                                        "id": "u:1780a8c481c4",
+                                        "imageClassName": "r w-full",
+                                        "label": "头像",
+                                        "limit": false,
+                                        "multiple": false,
+                                        "name": "avatar",
+                                        "proxy": true,
+                                        "receiver": {
+                                            "adaptor": "",
+                                            "data": { "dir": "avatars" },
+                                            "messages": {},
+                                            "method": "post",
+                                            "requestAdaptor": "",
+                                            "url": "/upload"
+                                        },
+                                        "row": 1,
+                                        "type": "input-image",
+                                        "uploadType": "fileReceptor"
+                                    },
+                                    {
+                                        "clearable": true,
+                                        "colSize": "1",
+                                        "id": "u:7bf0c6aa5731",
+                                        "label": "姓名",
+                                        "name": "name",
+                                        "required": true,
+                                        "row": 2,
+                                        "type": "input-text",
+                                        "validations": { "maxLength": 255 }
+                                    },
+                                    {
+                                        "clearable": true,
+                                        "colSize": "1",
+                                        "id": "u:de8fafd6a92b",
+                                        "label": "用户名",
+                                        "name": "username",
+                                        "required": true,
+                                        "row": 3,
+                                        "type": "input-text",
+                                        "validations": { "maxLength": 255 }
+                                    },
+                                    {
+                                        "clearable": true,
+                                        "colSize": "1",
+                                        "id": "u:5dc8f42edf1d",
+                                        "label": "密码",
+                                        "name": "password",
+                                        "required": true,
+                                        "row": 4,
+                                        "showCounter": false,
+                                        "type": "input-password",
+                                        "validations": { "maxLength": 255 }
+                                    },
+                                    {
+                                        "id": "u:39f0f1a0f986",
+                                        "label": "确认密码",
+                                        "name": "confirm_password",
+                                        "row": 5,
+                                        "showCounter": false,
+                                        "type": "input-password",
+                                        "validationErrors": {
+                                            "equalsField": "两次输入密码不一致"
+                                        },
+                                        "validations": {
+                                            "equalsField": "password"
+                                        }
+                                    },
+                                    {
+                                        "checkAll": false,
+                                        "clearable": true,
+                                        "id": "u:68e12beb0fb3",
+                                        "joinValues": true,
+                                        "label": "角色",
+                                        "multiple": true,
+                                        "name": "role_ids",
+                                        "row": 6,
+                                        "searchable": true,
+                                        "source": {
+                                            "adaptor": "",
+                                            "messages": {},
+                                            "method": "get",
+                                            "requestAdaptor": "",
+                                            "url": "/system/users/role_options"
+                                        },
+                                        "type": "select"
+                                    },
+                                    {
+                                        "falseValue": 0,
+                                        "id": "u:59675f8a4d35",
+                                        "label": "状态",
+                                        "name": "enabled",
+                                        "offText": "禁用",
+                                        "onText": "启用",
+                                        "option": "",
+                                        "row": 7,
+                                        "trueValue": 1,
+                                        "type": "switch",
+                                        "value": 1
+                                    }
+                                ],
+                                "canAccessSuperData": false,
+                                "dsType": "api",
+                                "feat": "Insert",
+                                "id": "u:d21c51525db6",
+                                "labelAlign": "left",
+                                "mode": "normal",
+                                "type": "form"
+                            }
+                        ],
+                        "closeOnEsc": true,
+                        "closeOnOutside": true,
+                        "draggable": true,
+                        "id": "u:5778edd54fea",
+                        "resizable": false,
+                        "showCloseButton": true,
+                        "showErrorMsg": true,
+                        "showLoading": true,
+                        "title": "新增",
+                        "type": "drawer"
+                    },
+                    "editorSetting": { "behavior": "create" },
+                    "icon": "fa fa-plus",
+                    "id": "u:2f6d4463cb00",
+                    "label": "新增",
+                    "level": "primary",
+                    "type": "button",
+                    "visibleOn": "${isSuperAdmin || _permissions[\"system.admin_user.create\"]}"
+                },
+                { "type": "bulk-actions" },
+                { "align": "right", "id": "u:df448b218def", "type": "reload" },
+                {
+                    "align": "right",
+                    "id": "u:6046fb0268f2",
+                    "tpl": "内容",
+                    "type": "filter-toggler",
+                    "wrapperComponent": ""
+                }
+            ],
+            "id": "u:563375ef114c",
+            "itemActions": [],
+            "messages": {},
+            "perPage": 20,
+            "perPageAvailable": [5, 10, 20, 50, 100],
+            "quickSaveItemApi": {
+                "method": "post",
+                "url": "/system/users/quick_save"
+            },
+            "syncLocation": false,
+            "type": "crud"
+        }
+    ],
+    "data": { "showFilter": false },
+    "definitions": {},
+    "id": "u:a8979bbc7044",
+    "initApi": { "method": "get", "url": "/permissions" },
+    "pullRefresh": { "disabled": true },
+    "regions": ["body"],
+    "type": "page"
+}

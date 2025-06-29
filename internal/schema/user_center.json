@@ -1,0 +1,139 @@
+{
+    "body": [
+        {
+            "api": "post:/user",
+            "body": [
+                {
+                    "type": "fieldset",
+                    "title": "基础信息",
+                    "collapsable": false,
+                    "body": [
+                        {
+                            "label": "头像",
+                            "name": "avatar",
+                            "receiver": {
+                                "method": "post",
+                                "url": "/upload",
+                                "requestAdaptor": "",
+                                "adaptor": "",
+                                "messages": {}
+                            },
+                            "type": "input-image",
+                            "id": "u:b8e333d75acb",
+                            "accept": ".jpeg, .jpg, .png, .gif",
+                            "uploadType": "fileReceptor",
+                            "proxy": true,
+                            "multiple": false,
+                            "hideUploadButton": true,
+                            "autoUpload": true,
+                            "crop": { "viewMode": 1 },
+                            "cropQuality": 0.7,
+                            "limit": false
+                        },
+                        {
+                            "label": "姓名",
+                            "name": "name",
+                            "required": true,
+                            "type": "input-text",
+                            "id": "u:fcf91118a9d3"
+                        }
+                    ],
+                    "id": "u:d9344b16e803",
+                    "subFormMode": "normal",
+                    "className": "",
+                    "bodyClassName": "p-5"
+                },
+                {
+                    "type": "container",
+                    "body": [],
+                    "style": {
+                        "position": "relative",
+                        "display": "flex",
+                        "inset": "auto",
+                        "flexWrap": "nowrap",
+                        "flexDirection": "column",
+                        "alignItems": "flex-start",
+                        "height": "30px",
+                        "overflowY": "visible"
+                    },
+                    "size": "none",
+                    "wrapperBody": false,
+                    "id": "u:5d356d18f149",
+                    "isFixedHeight": true,
+                    "isFixedWidth": false
+                },
+                {
+                    "type": "fieldset",
+                    "title": "修改密码",
+                    "collapsable": true,
+                    "body": [
+                        {
+                            "label": "密码",
+                            "name": "password",
+                            "type": "input-password",
+                            "id": "u:a27d9df8f66a"
+                        },
+                        {
+                            "label": "确认密码",
+                            "name": "confirm_password",
+                            "type": "input-password",
+                            "id": "u:c9a7d672f6a2",
+                            "validations": { "equalsField": "password" },
+                            "validationErrors": {
+                                "equalsField": "两次输入密码不一致"
+                            }
+                        },
+                        {
+                            "label": "旧密码",
+                            "name": "old_password",
+                            "type": "input-password",
+                            "id": "u:898828473c04",
+                            "required": true,
+                            "validateOnChange": false,
+                            "visibleOn": "${password}"
+                        }
+                    ],
+                    "id": "u:0051aedbe481",
+                    "collapsed": true,
+                    "subFormMode": "normal",
+                    "className": "",
+                    "bodyClassName": "p-5",
+                    "headingClassName": ""
+                }
+            ],
+            "initApi": "/user",
+            "mode": "horizontal",
+            "panelClassName": "px-48 m:px-0",
+            "title": "",
+            "type": "form",
+            "id": "u:1097b79b6baa",
+            "actions": [
+                {
+                    "type": "submit",
+                    "label": "提交",
+                    "primary": true,
+                    "id": "u:b0bdb64b2420"
+                }
+            ],
+            "feat": "Edit",
+            "dsType": "api",
+            "labelAlign": "left",
+            "onEvent": {
+                "submitSucc": {
+                    "weight": 0,
+                    "actions": [
+                        {
+                            "ignoreError": false,
+                            "actionType": "custom",
+                            "script": "setTimeout(() => window.location.reload(), 1500)"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "type": "page",
+    "id": "u:c2d28fe870b3",
+    "asideResizor": false,
+    "pullRefresh": { "disabled": true }
+}
